@@ -16,7 +16,8 @@ longitude/latitude data}
 \item{buffer}{\code{numeric} distance in meters to be removed. Negative
 values are recommended}
 
-\item{poly_border}{\code{sf} object polygons}
+\item{poly_border}{\code{sf} object with one polygon or NULL. Can be
+the result of \code{concaveman::concaveman}}
 }
 \description{
 Remove borders

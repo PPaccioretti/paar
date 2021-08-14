@@ -54,7 +54,8 @@ if FALSE stop with error for any empty neighbors sets,
 if TRUE permit the weights list to be formed with zero-length
 weights vectors}
 
-\item{poly_border}{\code{sf} object polygons}
+\item{poly_border}{\code{sf} object with one polygon or NULL. Can be
+the result of \code{concaveman::concaveman}}
 }
 \value{
 an object of class \code{paar}
@@ -68,7 +69,7 @@ Data can be filtered by null, edge values, global
 Possible values for \code{toremove} are one or more elements of:
 \describe{
   \item{edges}{All data points for a distance of \code{buffer} m from data
-  edges are deleted}
+  edges are deleted.}
   \item{outlier}{Values that are outside the mean±\code{sdout} are removed}
   \item{inlier}{Local Moran index of spatial autocorrelation is calculated
   for each datum as a tool to identify inliers}
@@ -76,6 +77,6 @@ Possible values for \code{toremove} are one or more elements of:
 }
 \references{
 Vega, A., Córdoba, M., Castro-Franco, M. et al. Protocol for
-  automating error removal from yield maps. Precision Agric 20, 1030–1044
-  (2019). https://doi.org/10.1007/s11119-018-09632-8
+automating error removal from yield maps. Precision Agric 20, 1030–1044
+(2019). https://doi.org/10.1007/s11119-018-09632-8
 }

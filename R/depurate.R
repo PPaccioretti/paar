@@ -11,18 +11,21 @@
 #'   implement for errors removal. Default 'edges', 'outlier', 'inlier'.
 #'   See Details.
 #'
-#' @details Possible values for \code{toremove} are one or more elements of:
+#' @details
+#' Possible values for \code{toremove} are one or more elements of:
 #' \describe{
 #'   \item{edges}{All data points for a distance of \code{buffer} m from data
-#'   edges are deleted}
+#'   edges are deleted.}
 #'   \item{outlier}{Values that are outside the mean±\code{sdout} are removed}
 #'   \item{inlier}{Local Moran index of spatial autocorrelation is calculated
 #'   for each datum as a tool to identify inliers}
 #' }
 #'
-#' @references Vega, A., Córdoba, M., Castro-Franco, M. et al. Protocol for
-#'   automating error removal from yield maps. Precision Agric 20, 1030–1044
-#'   (2019). https://doi.org/10.1007/s11119-018-09632-8
+#' @references
+#' Vega, A., Córdoba, M., Castro-Franco, M. et al. Protocol for
+#' automating error removal from yield maps. Precision Agric 20, 1030–1044
+#' (2019). https://doi.org/10.1007/s11119-018-09632-8
+#'
 #' @return an object of class \code{paar}
 #' @export
 #'
@@ -39,7 +42,6 @@ depurate <- function(x,
                      udist = 40,
                      zero.policy = NULL,
                      poly_border = NULL) {
-
   toremove <- match.arg(toremove,
                         c('edges', 'outlier', 'inlier'),
                         several.ok = TRUE)
@@ -124,7 +126,8 @@ depurate <- function(x,
 #'   longitude/latitude data
 #' @param buffer \code{numeric} distance in meters to be removed. Negative
 #'   values are recommended
-#' @param poly_border \code{sf} object polygons
+#' @param poly_border \code{sf} object with one polygon or NULL. Can be
+#' the result of \code{concaveman::concaveman}
 #'
 remove_border <- function(x,
                           crs = NULL,
@@ -139,41 +142,76 @@ remove_border <- function(x,
   }
 
   if (sf::st_is_longlat(x) & !is.na(sf::st_crs(x))) {
-    stopifnot('coordinates provided in crs are longlat degrees' =
-                !sf::st_is_longlat(crs),
-              'crs must be provided' =
-                !is.null(crs))
+    stopifnot(
+      'coordinates provided in crs are longlat degrees' =
+        !sf::st_is_longlat(crs),
+      'crs must be provided' =
+        !is.null(crs)
+    )
     x <- sf::st_transform(x, crs = crs)
 
   }
 
   # Checks if units package is installed to make buffer in meters
 
-    if (!is.na(sf::st_crs(x))) {
-      if (requireNamespace('units', quietly = TRUE)) {
-        buffer <- units::as_units(buffer, 'm')
-      } else {
-        message(
-          paste0(
-            'units package is suggested for this procedure\n',
-            'You can install it running install.packages("units")'
-          )
+  if (!is.na(sf::st_crs(x))) {
+    if (requireNamespace('units', quietly = TRUE)) {
+      buffer <- units::as_units(buffer, 'm')
+    } else {
+      message(
+        paste0(
+          'units package is suggested for this procedure\n',
+          'You can install it running install.packages("units")'
         )
-      }
+      )
     }
+  }
 
   if (as.numeric(buffer) > 0) {
     message('Negative buffer value is recommended')
   }
 
-  # mapa_hull <- sf::st_union(x)
-  # mapa_hull <- sf::st_convex_hull(mapa_hull)
- ## Make test to see if its polygon and sf or spatial
-   mapa_hull <- poly_border
+  if (!is.null(poly_border)) {
+    stopifnot('poly_border must be an sf object' =
+                'sf' %in% class(poly_border))
+
+    stopifnot(
+      'poly_border must have only POLYGON as geometry type' =
+        unique(sf::st_geometry_type(poly_border)) == 'POLYGON'
+    )
+
+    stopifnot('poly_border must have only one POLYGON (1 row)' =
+                nrow(poly_border) == 1)
+
+
+    mapa_hull <- poly_border
+
+  }
+
 
   if (is.null(poly_border)) {
-    mapa_hull <- concaveman::concaveman(x)
+    if (requireNamespace('concaveman', quietly = TRUE)) {
+      mapa_hull <- concaveman::concaveman(x)
+      message(
+        paste0(
+          'Concave hull algorithm is computed with\n',
+          'concavity = 2 and length_threshold = 0'
+        )
+      )
+    } else {
+      message(
+        paste0(
+          'concaveman package is suggested for this procedure\n',
+          'You can install it running install.packages("concaveman")',
+          'A convex hull will be computed'
+        )
+      )
+      mapa_hull <- sf::st_union(x)
+      mapa_hull <- sf::st_convex_hull(mapa_hull)
+
+    }
   }
+
 
   mapa_buffer <- sf::st_buffer(mapa_hull, buffer)
   is_inside <- sf::st_intersects(x, mapa_buffer)
@@ -200,6 +238,7 @@ remove_border <- function(x,
 #'   for the \code{y} variable. If \code{NA} \code{-Inf} is assumed
 #' @param sdout \code{numeric} values outside the interval
 #'  \eqn{mean ± sdout × sdout} values will be removed
+#'
 #'
 remove_outlier <- function(x,
                            y,
@@ -339,10 +378,10 @@ remove_inlier <- function(x,
 #'
 #' @param is_error internal object
 #' @param remove_result internal results from remove_* functions
-#'
+#' @noRd
 is_error_update <- function(is_error, remove_result) {
   # Keeps NA, others are conditions
-  is_error_no_na <- is_error[is.na(is_error$because), ]
+  is_error_no_na <- is_error[is.na(is_error$because),]
   idx_remove_result <- which(!is.na(remove_result$condition))
 
   mycondition <-
@@ -354,14 +393,12 @@ is_error_update <- function(is_error, remove_result) {
     merge(is_error,
           is_error_no_na,
           by = "idx",
-          all.x = TRUE
-    )
+          all.x = TRUE)
   # Keeps all conditions of removal
   is_error_merged$because <-
-    do.call(pmax, c(is_error_merged[ , -1], na.rm = TRUE))
+    do.call(pmax, c(is_error_merged[, -1], na.rm = TRUE))
 
   # Find dots in colnames and remove that columns (they are from merge function)
-  is_error_merged[,!agrepl("\\.", colnames(is_error_merged))]
+  is_error_merged[, !agrepl("\\.", colnames(is_error_merged))]
 
 }
-
