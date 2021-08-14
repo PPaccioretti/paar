@@ -15,7 +15,8 @@ depurate(
   sdout = 3,
   ldist = 0,
   udist = 40,
-  zero.policy = NULL
+  zero.policy = NULL,
+  poly_border = NULL
 )
 }
 \arguments{
@@ -52,6 +53,8 @@ for the \code{y} variable. If \code{NA} \code{-Inf} is assumed}
 if FALSE stop with error for any empty neighbors sets,
 if TRUE permit the weights list to be formed with zero-length
 weights vectors}
+
+\item{poly_border}{\code{sf} object polygons}
 }
 \value{
 an object of class \code{paar}

@@ -4,7 +4,7 @@
 \alias{remove_border}
 \title{Remove borders}
 \usage{
-remove_border(x, crs = NULL, buffer)
+remove_border(x, crs = NULL, buffer, poly_border = NULL)
 }
 \arguments{
 \item{x}{an \code{sf} points object}
@@ -15,6 +15,8 @@ longitude/latitude data}
 
 \item{buffer}{\code{numeric} distance in meters to be removed. Negative
 values are recommended}
+
+\item{poly_border}{\code{sf} object polygons}
 }
 \description{
 Remove borders

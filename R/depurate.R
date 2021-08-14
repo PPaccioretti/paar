@@ -37,7 +37,8 @@ depurate <- function(x,
                      sdout = 3,
                      ldist = 0,
                      udist = 40,
-                     zero.policy = NULL) {
+                     zero.policy = NULL,
+                     poly_border = NULL) {
 
   toremove <- match.arg(toremove,
                         c('edges', 'outlier', 'inlier'),
@@ -55,7 +56,8 @@ depurate <- function(x,
     without_border <- remove_border(
       x = x,
       crs = crs,
-      buffer = buffer
+      buffer = buffer,
+      poly_border = poly_border
     )
     is_error <- is_error_update(is_error,
                                 without_border)
@@ -122,10 +124,12 @@ depurate <- function(x,
 #'   longitude/latitude data
 #' @param buffer \code{numeric} distance in meters to be removed. Negative
 #'   values are recommended
+#' @param poly_border \code{sf} object polygons
 #'
 remove_border <- function(x,
                           crs = NULL,
-                          buffer) {
+                          buffer,
+                          poly_border = NULL) {
   stopifnot(is.numeric(buffer))
 
   # Checks if x has longlat crs and change it
@@ -164,7 +168,13 @@ remove_border <- function(x,
 
   # mapa_hull <- sf::st_union(x)
   # mapa_hull <- sf::st_convex_hull(mapa_hull)
-  mapa_hull <- concaveman::concaveman(x)
+ ## Make test to see if its polygon and sf or spatial
+   mapa_hull <- poly_border
+
+  if (is.null(poly_border)) {
+    mapa_hull <- concaveman::concaveman(x)
+  }
+
   mapa_buffer <- sf::st_buffer(mapa_hull, buffer)
   is_inside <- sf::st_intersects(x, mapa_buffer)
   is_inside <- do.call(c, lapply(is_inside, length))

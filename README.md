@@ -4,18 +4,19 @@
 # paar
 
 <!-- badges: start -->
+
+[![R-CMD-check](https://github.com/PPaccioretti/paar/workflows/R-CMD-check/badge.svg)](https://github.com/PPaccioretti/paar/actions)
 <!-- badges: end -->
 
-The goal of paar is to …
+The goal of paar is to provide useful functions for precision
+agriculture spatial data depuration and management zone delineation.
 
 ## Installation
 
-You can install the released version of paar from
-[CRAN](https://CRAN.R-project.org) with:
-
-``` r
-install.packages("paar")
-```
+<!-- You can install the released version of paar from [CRAN](https://CRAN.R-project.org) with: -->
+<!-- ``` r -->
+<!-- install.packages("paar") -->
+<!-- ``` -->
 
 ## Example
 
@@ -26,8 +27,7 @@ library(paar)
 ## basic example code
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`?
-You can include R chunks like so:
+TODO: provide useful example and data
 
 ``` r
 # Why should I use it?
@@ -45,13 +45,3 @@ You can include R chunks like so:
 # 
 # An overview that describes the main components of the package. For more complex packages, this will point to vignettes for more details.
 ```
-
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date.
-
-You can also embed plots, for example:
-
-<img src="man/figures/README-pressure-1.png" width="100%" />
-
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub!

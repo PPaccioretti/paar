@@ -7,9 +7,9 @@
 is_error_update(is_error, remove_result)
 }
 \arguments{
-\item{is_error}{internal obsect}
+\item{is_error}{internal object}
 
-\item{remove_result}{internal results from remove_*}
+\item{remove_result}{internal results from remove_* functions}
 }
 \description{
 Auxiliary function for update is_error object in depurate function
