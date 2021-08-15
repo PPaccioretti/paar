@@ -75,6 +75,23 @@ Possible values for \code{toremove} are one or more elements of:
   for each datum as a tool to identify inliers}
 }
 }
+\examples{
+library(sf)
+data(barley)
+
+#Convert to an sf object
+barley <- st_as_sf(barley,
+                   coords = c("X", "Y"),
+                   crs = 32720)
+
+depurated <-
+  depurate(barley,
+           "Yield")
+
+# Summary of depurated data
+summary(depurated)
+
+}
 \references{
 Vega, A., Córdoba, M., Castro-Franco, M. et al. Protocol for
 automating error removal from yield maps. Precision Agric 20, 1030–1044

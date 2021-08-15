@@ -3,8 +3,14 @@ Type: Package
 Title: Precision Agriculture data Analysis in R
 Version: 0.0.0.9000
 Authors@R:
+    c(
     person("Pablo", "Paccioretti", email = "pablopaccioretti@agro.unc.edu.ar", 
-    role = c("aut", "cre"))
+    role = c("aut", "cre")),
+        person("Mariano", "Córdoba", email = "marianoacba@agro.unc.edu.ar", 
+    role = c("aut")),
+        person("Franca", "Giannini Kurina", email = "fgkurina@agro.unc.edu.ar", 
+    role = c("aut"))
+    )
 Description: Functions useful for precision agriculture spatial data 
     depuration and management zone delineation. 
 License: MIT + file LICENSE

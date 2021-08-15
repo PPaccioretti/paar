@@ -30,6 +30,22 @@
 #' @export
 #'
 #' @examples
+#' library(sf)
+#' data(barley)
+#'
+#' #Convert to an sf object
+#' barley <- st_as_sf(barley,
+#'                    coords = c("X", "Y"),
+#'                    crs = 32720)
+#'
+#' depurated <-
+#'   depurate(barley,
+#'            "Yield")
+#'
+#' # Summary of depurated data
+#' summary(depurated)
+#'
+
 depurate <- function(x,
                      y,
                      toremove = c('edges', 'outlier', 'inlier'),
