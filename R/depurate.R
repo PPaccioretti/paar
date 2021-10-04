@@ -373,7 +373,11 @@ remove_inlier <- function(x,
                           zero.policy = zero.policy)
 
   # Influence by Local Moran
-  Influ_LM <- LM[, 'Ii'] < 0 & LM[, 'Pr(z < 0)'] < 0.05
+  # Seaarch column name which start with Pr
+  # since spdep >= 1.1.11 change old names
+  myColnameProb <- colnames(LM)[grepl("Pr\\(z" , colnames(LM))]
+
+  Influ_LM <- LM[, 'Ii'] < 0 & LM[, myColnameProb] < 0.05
   # Influence by MoranPlot
   Influ_MP <- MP$is_inf
 
