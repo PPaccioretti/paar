@@ -68,6 +68,13 @@ jobs:
           remotes::install_deps(dependencies = TRUE)
         shell: Rscript {0}
 
+      - name: Install gdal on macOS
+        if: runner.os == 'macOS'
+        run: |
+          brew install pkg-config
+          brew install gdal
+          brew install proj
+
       - name: Install binary dependencies
         if: runner.os != 'Linux'
         run: |
