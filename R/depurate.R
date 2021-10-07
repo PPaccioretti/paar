@@ -58,9 +58,21 @@ depurate <- function(x,
                      udist = 40,
                      zero.policy = NULL,
                      poly_border = NULL) {
+
   toremove <- match.arg(toremove,
                         c('edges', 'outlier', 'inlier'),
                         several.ok = TRUE)
+
+  if (!inherits(x, "sf")) {
+    stop('x must be an sf object')
+  }
+  if (missing(y)) {
+    if (ncol(sf::st_drop_geometry(x)) == 1) {
+      y <- names(x)[1]
+    } else {
+      stop('y must be a valid columname')
+    }
+  }
 
   stopifnot('y must be a vald columname' =
               y %in% colnames(x))
