@@ -32,6 +32,13 @@ test_that("depurate guess y if x has one column", {
                                     toremove = 'edges')})
 })
 
+
+#
+# test_that("remove border", {
+#
+#
+#   paar:::remove_border
+# })
 # expect_equal(sum(is.na(dep$condition)), 7)
 # expect_equal(sum(dep$condition == 'border', na.rm = T), 16)
 # expect_equal(sum(is.na(dep$condition)) +

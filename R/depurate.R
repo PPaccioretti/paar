@@ -56,6 +56,7 @@ depurate <- function(x,
                      sdout = 3,
                      ldist = 0,
                      udist = 40,
+                     criteria = c("LM", "MP"),
                      zero.policy = NULL,
                      poly_border = NULL) {
 
@@ -70,7 +71,7 @@ depurate <- function(x,
     if (ncol(sf::st_drop_geometry(x)) == 1) {
       y <- names(x)[1]
     } else {
-      stop('y must be a valid columname')
+      stop('y must be a valid column name')
     }
   }
 
@@ -91,7 +92,6 @@ depurate <- function(x,
     )
     is_error <- is_error_update(is_error,
                                 without_border)
-    # is_error[which(!is.na(without_border$condition)), 'because'] <- 'edges'
 
     x <- without_border$depurated_data
   }
@@ -106,9 +106,6 @@ depurate <- function(x,
     )
     is_error <- is_error_update(is_error,
                                 without_outlier)
-    # is_error[is.na(is_error$because), ][which(!is.na(without_outlier$condition)),
-    #                                     'because'] <-
-    #   without_outlier$condition[!is.na(without_outlier$condition)]
 
     x <- without_outlier$depurated_data
 
@@ -123,9 +120,6 @@ depurate <- function(x,
       zero.policy = zero.policy
     )
 
-    # is_error[is.na(is_error$because), ][which(!is.na(without_inlier$condition)),
-    #                                     'because'] <-
-    #   without_inlier$condition[!is.na(without_inlier$condition)]
     is_error <- is_error_update(is_error,
                                 without_inlier)
     x <- without_inlier$depurated_data
@@ -161,11 +155,13 @@ remove_border <- function(x,
                           crs = NULL,
                           buffer,
                           poly_border = NULL) {
-  stopifnot(is.numeric(buffer))
+  if (!is.numeric(buffer)) {
+    stop("buffer must be numeric", call. = FALSE)
+  }
 
   # Checks if x has longlat crs and change it
   if (is.na(sf::st_crs(x))) {
-    warning('Pleas check results due to crs of object x is NA.')
+    warning('Please check results due to crs of object x is NA.')
 
   }
 
@@ -200,16 +196,24 @@ remove_border <- function(x,
   }
 
   if (!is.null(poly_border)) {
-    stopifnot('poly_border must be an sf object' =
-                'sf' %in% class(poly_border))
+    if (!inherits(poly_border, "sf")) {
+      stop('poly_border must be an sf object', call. = FALSE)
+    }
 
-    stopifnot(
-      'poly_border must have only POLYGON as geometry type' =
-        unique(sf::st_geometry_type(poly_border)) == 'POLYGON'
-    )
+    if (unique(sf::st_geometry_type(poly_border)) != 'POLYGON') {
+      stop('poly_border must have only POLYGON as geometry type',
+           call. = FALSE)
+    }
 
-    stopifnot('poly_border must have only one POLYGON (1 row)' =
-                nrow(poly_border) == 1)
+    if (nrow(poly_border) != 1) {
+      stop(paste(
+        'poly_border must have only one POLYGON (1 row)\n',
+        'has',
+        nrow(poly_border),
+        'rows'
+      ),
+      call. = FALSE)
+    }
 
 
     mapa_hull <- poly_border
@@ -231,7 +235,7 @@ remove_border <- function(x,
         paste0(
           'concaveman package is suggested for this procedure\n',
           'You can install it running install.packages("concaveman")',
-          'A convex hull will be computed'
+          'A convex hull using sf::st_convex_hull will be computed'
         )
       )
       mapa_hull <- sf::st_union(x)
@@ -242,6 +246,27 @@ remove_border <- function(x,
 
 
   mapa_buffer <- sf::st_buffer(mapa_hull, buffer)
+  emptyGeometry <- sf::st_is_empty(mapa_buffer)
+  if (all(emptyGeometry)) {
+    stop(paste0(
+      "'buffer' value (",
+      buffer,
+      ") is higher than all polygons border lengths"
+    ),
+    call. = FALSE)
+
+  }
+
+  if (any(emptyGeometry)) {
+    mapa_buffer <- mapa_buffer[emptyGeometry, ]
+    warning(paste0("Some polygons (", sum(emptyGeometry), ") will be ",
+                   "removed from the analysis ",
+                   "because 'buffer' value (", buffer,
+                   ") is higher than polygon length"),
+            call. = FALSE)
+
+  }
+
   is_inside <- sf::st_intersects(x, mapa_buffer)
   is_inside <- do.call(c, lapply(is_inside, length))
   is_inside <- as.logical(is_inside)
@@ -329,6 +354,8 @@ remove_outlier <- function(x,
 #'    depuration process
 #' @param ldist \code{numeric} lower distance bound to identify neighbors
 #' @param udist \code{numeric} upper distance bound to identify neighbors
+#' @param criteria \code{character} with "LM" and/or "MP" for methods to
+#'    identify spatial outliers
 #' @param zero.policy default NULL, use global option value;
 #'   if FALSE stop with error for any empty neighbors sets,
 #'   if TRUE permit the weights list to be formed with zero-length
@@ -338,10 +365,16 @@ remove_inlier <- function(x,
                           y,
                           ldist = 0,
                           udist = 40,
-                          zero.policy = NULL) {
+                          criteria = c("LM", "MP"),
+                          zero.policy = NULL
+                          ) {
   stopifnot('x must be sf class' = inherits(x, 'sf'),
             is.numeric(ldist),
             is.numeric(udist))
+
+  criteria <- match.arg(criteria,
+                        c("LM", "MP"),
+                        several.ok = TRUE)
 
   maxiter <- 10
 
@@ -370,33 +403,41 @@ remove_inlier <- function(x,
 
   if (!lw_found) {
     stop('Neighbours cannot be identified\n',
-         'try modifying the ldist or udist values')
+         'try modifying the ldist or udist values',
+         call. = FALSE)
   }
 
+  condition <- rep(NA_character_, nrow(x))
+
+  # By default non are extracted
+  Influ_LM <- rep(FALSE, nrow(x))
+  Influ_MP <- rep(FALSE, nrow(x))
+  if ("LM" %in% criteria) {
   LM <- spdep::localmoran(x[[y]],
                           lw,
-                          p.adjust.method = 'bonferroni',
+                          # p.adjust.method = 'bonferroni',
                           alternative = 'less')
+  # Influence by Local Moran
+  # Search column name which start with Pr
+  # since spdep >= 1.1.11 change old names
+  myColnameProb <- colnames(LM)[grepl("Pr\\(z" , colnames(LM))]
 
+  Influ_LM <- LM[, 'Ii'] < 0 & LM[, myColnameProb] < 0.05
+  condition[Influ_LM] <- 'spatial outlier LM'
+  }
+  # Influence by MoranPlot
+  if ("MP" %in% criteria) {
   MP <- spdep::moran.plot(x[[y]],
                           lw,
                           quiet = TRUE,
                           plot = FALSE,
                           zero.policy = zero.policy)
 
-  # Influence by Local Moran
-  # Seaarch column name which start with Pr
-  # since spdep >= 1.1.11 change old names
-  myColnameProb <- colnames(LM)[grepl("Pr\\(z" , colnames(LM))]
 
-  Influ_LM <- LM[, 'Ii'] < 0 & LM[, myColnameProb] < 0.05
-  # Influence by MoranPlot
+
   Influ_MP <- MP$is_inf
-
-  condition <- rep(NA_character_, nrow(x))
-  condition[Influ_LM] <- 'spatial outlier LM'
   condition[Influ_MP] <- 'spatial outlier MP'
-
+  }
   # x[[condition_name]] <- condition
 
   mapa_dep <- subset(x, !(Influ_LM | Influ_MP))

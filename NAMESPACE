@@ -2,4 +2,7 @@
 
 S3method(print,paar)
 S3method(summary,paar)
+export(compare_zone)
 export(depurate)
+export(kmspc)
+export(spatial_t_test)

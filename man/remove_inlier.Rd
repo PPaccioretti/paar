@@ -4,7 +4,14 @@
 \alias{remove_inlier}
 \title{Remove spatial outliers}
 \usage{
-remove_inlier(x, y, ldist = 0, udist = 40, zero.policy = NULL)
+remove_inlier(
+  x,
+  y,
+  ldist = 0,
+  udist = 40,
+  criteria = c("LM", "MP"),
+  zero.policy = NULL
+)
 }
 \arguments{
 \item{x}{an \code{sf} points object}
@@ -15,6 +22,9 @@ depuration process}
 \item{ldist}{\code{numeric} lower distance bound to identify neighbors}
 
 \item{udist}{\code{numeric} upper distance bound to identify neighbors}
+
+\item{criteria}{\code{character} with "LM" and/or "MP" for methods to
+identify spatial outliers}
 
 \item{zero.policy}{default NULL, use global option value;
 if FALSE stop with error for any empty neighbors sets,

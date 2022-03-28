@@ -67,7 +67,7 @@ summary(barley_dep)
 Spatial yield values before and after depuration process can be plotted
 
 ```{r, fig.height=2, fig.height=5, out.width="50%", fig.show="hold"}
-plot(barley_sf["Yield"], breaks = 'quantile', main = "Before depuration")
+plot(barley_sf["Yield"], main = "Before depuration")
 plot(barley_dep$depurated_data["Yield"], main = "After depuration")
 ```
 

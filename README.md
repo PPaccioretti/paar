@@ -59,15 +59,15 @@ barley_dep <-
 # Summary of depurated data
 summary(barley_dep)
 #>       normal point               border   spatial outlier MP   
-#>         5978 (81%)            964 (13%)           343 (4.6%)   
-#>         global min              outlier   spatial outlier LM   
-#>          99 (1.3%)           6 (0.081%)           4 (0.054%)
+#>         5673 (77%)            964 (13%)           343 (4.6%)   
+#> spatial outlier LM           global min              outlier   
+#>         309 (4.2%)            99 (1.3%)           6 (0.081%)
 ```
 
 Spatial yield values before and after depuration process can be plotted
 
 ``` r
-plot(barley_sf["Yield"], breaks = 'quantile', main = "Before depuration")
+plot(barley_sf["Yield"], main = "Before depuration")
 plot(barley_dep$depurated_data["Yield"], main = "After depuration")
 ```
 
