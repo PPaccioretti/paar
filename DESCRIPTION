@@ -1,6 +1,6 @@
 Package: paar
 Type: Package
-Title: Precision Agriculture data Analysis in R
+Title: Precision Agriculture Data Analysis in R
 Version: 0.0.0.9000
 Authors@R:
     c(
