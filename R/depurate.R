@@ -78,6 +78,12 @@ depurate <- function(x,
   stopifnot('y must be a vald columname' =
               y %in% colnames(x))
 
+
+  criteria <- match.arg(criteria,
+                        c('LM', 'MP'),
+                        several.ok = TRUE)
+
+
   is_error <- data.frame('idx' = seq_len(nrow(x)),
                          'because' = NA_character_)
 
@@ -117,6 +123,7 @@ depurate <- function(x,
       y = y,
       ldist = ldist,
       udist = udist,
+      criteria = criteria,
       zero.policy = zero.policy
     )
 
