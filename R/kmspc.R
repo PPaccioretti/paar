@@ -42,7 +42,7 @@ kmspc <- function(data,
     if (sum(myNumVars) == 0) {
       stop('Non numeric variables were found in data')
     }
-    variables <- names(data)[myNumVars]
+    variables <- names(sf::st_drop_geometry(data))[myNumVars]
   }
 
   if (!inherits(data, "sf") & (length(variables) > 1)) {
@@ -58,6 +58,12 @@ kmspc <- function(data,
   }
 
   data <- data[, variables]
+  raw_nrow <- nrow(data)
+  myNArows <- apply(sf::st_drop_geometry(data), 1, function(x) {
+    any(is.na(x))
+  })
+
+
   data <- stats::na.omit(data)
   data_clust <- data
   if (ncol(sf::st_drop_geometry(data)) > 1 ) {
@@ -109,10 +115,20 @@ kmspc <- function(data,
   if (inherits(data_clust, "sf")) {
     data_clust <-  sf::st_drop_geometry(data_clust)
   }
-  make_clasification(data_clust,
-                     number_cluster,
-                     fuzzyness = fuzzyness,
-                     distance = distance)
+  my_results <- make_clasification(data_clust,
+                                   number_cluster,
+                                   fuzzyness = fuzzyness,
+                                   distance = distance)
+
+
+  cluster_na <- data.frame(matrix(NA,
+                                 nrow = raw_nrow,
+                                 ncol = ncol(my_results$cluster)))
+  colnames(cluster_na) <- colnames(my_results$cluster)
+  cluster_na[!myNArows, ] <- my_results$cluster
+
+  my_results$cluster <- cluster_na
+  my_results
 
 }
 
