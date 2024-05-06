@@ -14,7 +14,8 @@ kmspc(
   center = TRUE,
   fuzzyness = 1.2,
   distance = "euclidean",
-  zero.policy = FALSE
+  zero.policy = FALSE,
+  only_spca_results = TRUE
 )
 }
 \arguments{
@@ -48,9 +49,13 @@ absolute error is computed. Abbreviations are also accepted.}
 if FALSE stop with error for any empty neighbors sets,
 if TRUE permit the weights list to be formed with zero-length
 weights vectors}
+
+\item{only_spca_results}{\code{logical}; should return both PCA and sPCA
+results, or only sPCA results? This can be a time consuming process if
+there are multiple variables.}
 }
 \value{
-a list with classification results and indices to select bes number of
+a list with classification results and indices to select best number of
 clusters.
 }
 \description{

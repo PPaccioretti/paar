@@ -17,7 +17,10 @@
 #' @param distance \code{character} Must be one of the following:
 #' If "euclidean", the mean square error, if "manhattan", the mean
 #' absolute error is computed. Abbreviations are also accepted.
-#' @return a list with classification results and indices to select bes number of
+#' @param only_spca_results \code{logical}; should return both PCA and sPCA
+#' results, or only sPCA results? This can be a time consuming process if
+#' there are multiple variables.
+#' @return a list with classification results and indices to select best number of
 #' clusters.
 #' @export
 #'
@@ -31,17 +34,17 @@ kmspc <- function(data,
                   center = TRUE,
                   fuzzyness = 1.2,
                   distance = "euclidean",
-                  zero.policy = FALSE) {
+                  zero.policy = FALSE,
+                  only_spca_results = TRUE) {
 
   if (missing(variables)) {
-    warning("All numeric Variables will be used to make clusters",
-            call. = FALSE)
     myNumVars <-
       unlist(lapply(sf::st_drop_geometry(data), is.numeric))
-
     if (sum(myNumVars) == 0) {
       stop('Non numeric variables were found in data')
     }
+    warning("All numeric Variables will be used to make clusters",
+            call. = FALSE)
     variables <- names(sf::st_drop_geometry(data))[myNumVars]
   }
 
@@ -49,12 +52,16 @@ kmspc <- function(data,
     stop('data must be an sf object')
   }
 
+  if (length(variables) <= 1) {
+    stop('There should be more than 1 numeric variables')
+  }
+
   if (between(explainedVariance, 0, 1)) {
     explainedVariance <- explainedVariance * 100
   }
 
   if (!between(explainedVariance, 0, 100)) {
-    stop("explainedVariance must bu a value between 0 and 100")
+    stop("explainedVariance must be a value between 0 and 100")
   }
 
   data <- data[, variables]
@@ -66,7 +73,7 @@ kmspc <- function(data,
 
   data <- stats::na.omit(data)
   data_clust <- data
-  if (ncol(sf::st_drop_geometry(data)) > 1 ) {
+
   lw <- spatial_weights(data, ldist, udist, zero.policy = zero.policy)
   pca <-
     dudy_pca(
@@ -88,33 +95,64 @@ kmspc <- function(data,
       )
   )
 
+  # PCA results -----
+  pca_results <- NULL
+  if(!only_spca_results) {
+
+    autov_pca <- pca$eig
+    propvar_pca <- autov_pca / sum(autov_pca)
+    propvaracum_pca <- cumsum(propvar_pca)
+
+    my_pca <- lapply(pca$l1, spdep::moran.mc, lw, 999)
+    my_pca <- do.call(rbind, lapply(my_pca, '[[', 'statistic'))
+    # my_pca <- data.frame(statistic = my_pca[, 'statistic'])
+
+    nfila_pca <- length(variables)
+    eje_pca <- seq_len(nfila_pca)
+    resultado_pca = data.frame(eje_pca, autov_pca, propvar_pca, propvaracum_pca, my_pca)
+    resultado_pca$eje_pca <- as.factor(resultado_pca$eje_pca)
+    names(resultado_pca) = c("Axis",
+                             "Eigenvalue",
+                             "Prop",
+                             "Acum. Prop.",
+                             "Moran Index")
+
+    pca_results <- list(pca_results = resultado_pca)
+  }
+
+
+  # sPCA results ----
   invisible(utils::capture.output(resms <- summary(ms)))
   var_ms <- resms[, 2, drop = F]
   nfila_ms <- length(ms$eig)
   propvar_ms <- var_ms / nfila_ms
   propvaracum_ms <- cumsum(propvar_ms) * 100
 
-  eje_ms <- c(1:nfila_ms)
+  eje_ms <- seq_len(nfila_ms)
   resultado_ms <-
-    data.frame(eje_ms, resms$eig, resms$var, propvar_ms, propvaracum_ms)
+    data.frame(eje_ms, resms$eig, resms$var, propvar_ms, propvaracum_ms, resms$moran)
   names(resultado_ms) <-
     c("Axis",
       "Eigenvalue",
       "Spatial Variance",
       "Prop",
-      "Acum. Prop.")
+      "Acum. Prop.",
+      "Moran Index")
 
-
+  spca_results <- list(spca_results = resultado_ms)
+  pca_results <- append(pca_results,
+                        spca_results)
   num_sPC <-
     seq_len(Position(function(x) {
       x > explainedVariance
-    }, resultado_ms[, 5]))
+    }, unlist(propvaracum_ms)))
 
   data_clust <- ms$li[num_sPC]
-  }
+
   if (inherits(data_clust, "sf")) {
     data_clust <-  sf::st_drop_geometry(data_clust)
   }
+
   my_results <- make_clasification(data_clust,
                                    number_cluster,
                                    fuzzyness = fuzzyness,
@@ -128,6 +166,7 @@ kmspc <- function(data,
   cluster_na[!myNArows, ] <- my_results$cluster
 
   my_results$cluster <- cluster_na
+  my_results$pca_results <- pca_results
   my_results
 
 }
@@ -794,7 +833,7 @@ fclustIndex <- function(y, x, index = "all")
     maxcluster <- double(ncenters)
     minimum <- -1
     for (i in 1:ncenters) {
-      maxcluster[i] <- max(dist(matrix(x[clres$cl == i],
+      maxcluster[i] <- max(stats::dist(matrix(x[clres$cl == i],
                                        ncol = xcols)))
     }
     maxdia <- maxcluster[rev(order(maxcluster))[1]]
