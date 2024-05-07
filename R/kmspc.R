@@ -18,8 +18,10 @@
 #' If "euclidean", the mean square error, if "manhattan", the mean
 #' absolute error is computed. Abbreviations are also accepted.
 #' @param only_spca_results \code{logical}; should return both PCA and sPCA
-#' results, or only sPCA results? This can be a time consuming process if
-#' there are multiple variables.
+#' results (\code{FALSE}), or only sPCA results (\code{TRUE})? This can be a
+#' time consuming process if there are multiple variables.
+#' @param all_results \code{logical}; should return the results from the
+#' sPCA and PCA call?
 #' @return a list with classification results and indices to select best number of
 #' clusters.
 #' @export
@@ -35,7 +37,8 @@ kmspc <- function(data,
                   fuzzyness = 1.2,
                   distance = "euclidean",
                   zero.policy = FALSE,
-                  only_spca_results = TRUE) {
+                  only_spca_results = TRUE,
+                  all_results = FALSE) {
 
   if (missing(variables)) {
     myNumVars <-
@@ -97,6 +100,11 @@ kmspc <- function(data,
 
   # PCA results -----
   pca_results <- NULL
+
+  if(all_results) {
+    pca_results <- list(pca_results_all = pca)
+  }
+
   if(!only_spca_results) {
 
     autov_pca <- pca$eig
@@ -116,8 +124,8 @@ kmspc <- function(data,
                              "Prop",
                              "Acum. Prop.",
                              "Moran Index")
-
-    pca_results <- list(pca_results = resultado_pca)
+    pca_results <- c(list(pca_results = resultado_pca),
+                     pca_results)
   }
 
 
@@ -139,13 +147,22 @@ kmspc <- function(data,
       "Acum. Prop.",
       "Moran Index")
 
-  spca_results <- list(spca_results = resultado_ms)
-  pca_results <- append(pca_results,
-                        spca_results)
   num_sPC <-
     seq_len(Position(function(x) {
       x > explainedVariance
     }, unlist(propvaracum_ms)))
+
+  spca_results <- list(spca_summary_results = resultado_ms,
+                       eigenvectors_used = ms$c1[, num_sPC, drop = FALSE])
+
+  if(all_results) {
+    spca_results <- append(spca_results,
+                           list(spca_results_all = ms))
+  }
+
+  pca_results <- append(pca_results,
+                        spca_results)
+
 
   data_clust <- ms$li[num_sPC]
 
@@ -164,7 +181,8 @@ kmspc <- function(data,
                                  ncol = ncol(my_results$cluster)))
   colnames(cluster_na) <- colnames(my_results$cluster)
   cluster_na[!myNArows, ] <- my_results$cluster
-
+  # Return cluster as character
+  cluster_na <- apply(cluster_na, 2, as.character)
   my_results$cluster <- cluster_na
   my_results$pca_results <- pca_results
   my_results

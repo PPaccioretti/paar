@@ -15,7 +15,8 @@ kmspc(
   fuzzyness = 1.2,
   distance = "euclidean",
   zero.policy = FALSE,
-  only_spca_results = TRUE
+  only_spca_results = TRUE,
+  all_results = FALSE
 )
 }
 \arguments{
@@ -51,8 +52,11 @@ if TRUE permit the weights list to be formed with zero-length
 weights vectors}
 
 \item{only_spca_results}{\code{logical}; should return both PCA and sPCA
-results, or only sPCA results? This can be a time consuming process if
-there are multiple variables.}
+results (\code{FALSE}), or only sPCA results (\code{TRUE})? This can be a
+time consuming process if there are multiple variables.}
+
+\item{all_results}{\code{logical}; should return the results from the
+sPCA and/or PCA call?}
 }
 \value{
 a list with classification results and indices to select best number of
