@@ -423,7 +423,8 @@ remove_inlier <- function(x,
   LM <- spdep::localmoran(x[[y]],
                           lw,
                           # p.adjust.method = 'bonferroni',
-                          alternative = 'less')
+                          alternative = 'less',
+                          zero.policy = zero.policy)
   # Influence by Local Moran
   # Search column name which start with Pr
   # since spdep >= 1.1.11 change old names
