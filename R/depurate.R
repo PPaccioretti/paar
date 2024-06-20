@@ -399,7 +399,7 @@ remove_inlier <- function(x,
       i <- i + 1
       umin <- umin + 10
       gri <- spdep::dnearneigh(x, ldist, umin)
-      lw <- try(spdep::nb2listw(gri, style = 'W'),
+      lw <- try(spdep::nb2listw(gri, style = 'W', zero.policy = zero.policy),
                 silent = TRUE)
 
       if (all(class(lw) != 'try-error') | i >= maxiter)
@@ -440,8 +440,6 @@ remove_inlier <- function(x,
                           quiet = TRUE,
                           plot = FALSE,
                           zero.policy = zero.policy)
-
-
 
   Influ_MP <- MP$is_inf
   condition[Influ_MP] <- 'spatial outlier MP'
