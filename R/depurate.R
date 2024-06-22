@@ -75,7 +75,7 @@ depurate <- function(x,
     }
   }
 
-  stopifnot('y must be a vald columname' =
+  stopifnot('y must be a valid columname' =
               y %in% colnames(x))
 
 
