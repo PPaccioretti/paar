@@ -71,7 +71,7 @@ depurate <- function(x,
     if (ncol(sf::st_drop_geometry(x)) == 1) {
       y <- names(x)[1]
     } else {
-      stop('y must be a valid column name')
+      stop('y is missing; must be a valid column name')
     }
   }
 
