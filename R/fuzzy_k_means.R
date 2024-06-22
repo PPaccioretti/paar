@@ -31,7 +31,7 @@ fuzzy_k_means <- function(data,
   #   stop('data must be an sf object')
   # }
   #
-  if (length(variables) >= 1) {
+  if (length(variables) < 1) {
     stop('There should be 1 or more numeric variables')
   }
 
