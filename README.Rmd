@@ -18,6 +18,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/PPaccioretti/paar/workflows/R-CMD-check/badge.svg)](https://github.com/PPaccioretti/paar/actions)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![R-CMD-check](https://github.com/PPaccioretti/paar/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/PPaccioretti/paar/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The goal of `paar` is to provide useful functions for 

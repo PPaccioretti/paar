@@ -8,6 +8,7 @@
 [![R-CMD-check](https://github.com/PPaccioretti/paar/workflows/R-CMD-check/badge.svg)](https://github.com/PPaccioretti/paar/actions)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![R-CMD-check](https://github.com/PPaccioretti/paar/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/PPaccioretti/paar/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The goal of `paar` is to provide useful functions for precision
@@ -55,6 +56,9 @@ barley_dep <-
            "Yield")
 #> Concave hull algorithm is computed with
 #> concavity = 2 and length_threshold = 0
+```
+
+``` r
 
 # Summary of depurated data
 summary(barley_dep)
@@ -84,10 +88,10 @@ boxplot(barley_dep$depurated_data[["Yield"]], main = "After depuration")
 
 ## References
 
--   Vega, A., Córdoba, M., Castro-Franco, M. et al. (2019). Protocol for
-    automating error removal from yield maps. Precision Agric 20,
-    1030–1044 <https://doi.org/10.1007/s11119-018-09632-8>
--   Paccioretti, P., Córdoba, M., & Balzarini, M. (2020). FastMapping:
-    Software to create field maps and identify management zones in
-    precision agriculture. Computers and Electronics in Agriculture,
-    175, 105556 <https://doi.org/10.1016/j.compag.2020.105556>.
+- Vega, A., Córdoba, M., Castro-Franco, M. et al. (2019). Protocol for
+  automating error removal from yield maps. Precision Agric 20,
+  1030–1044 <https://doi.org/10.1007/s11119-018-09632-8>
+- Paccioretti, P., Córdoba, M., & Balzarini, M. (2020). FastMapping:
+  Software to create field maps and identify management zones in
+  precision agriculture. Computers and Electronics in Agriculture, 175,
+  105556 <https://doi.org/10.1016/j.compag.2020.105556>.
