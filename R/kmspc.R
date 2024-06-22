@@ -51,13 +51,13 @@ kmspc <- function(data,
     variables <- names(sf::st_drop_geometry(data))[myNumVars]
   }
 
-  if (!inherits(data, "sf") & (length(variables) > 1)) {
+  if (!inherits(data, "sf")) {
     stop('data must be an sf object')
   }
 
-  if (length(variables) <= 1) {
-    stop('There should be more than 1 numeric variables')
-  }
+  # if (length(variables) <= 1) {
+  #   stop('There should be more than 1 numeric variables')
+  # }
 
   if (between(explainedVariance, 0, 1)) {
     explainedVariance <- explainedVariance * 100
@@ -67,7 +67,7 @@ kmspc <- function(data,
     stop("explainedVariance must be a value between 0 and 100")
   }
 
-  data <- data[, variables]
+  data <- data[, variables, drop = FALSE]
   raw_nrow <- nrow(data)
   myNArows <- apply(sf::st_drop_geometry(data), 1, function(x) {
     any(is.na(x))
