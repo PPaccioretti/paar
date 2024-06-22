@@ -56,7 +56,7 @@ results (\code{FALSE}), or only sPCA results (\code{TRUE})? This can be a
 time consuming process if there are multiple variables.}
 
 \item{all_results}{\code{logical}; should return the results from the
-sPCA and/or PCA call?}
+sPCA and PCA call?}
 }
 \value{
 a list with classification results and indices to select best number of
