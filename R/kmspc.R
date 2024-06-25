@@ -55,9 +55,11 @@ kmspc <- function(data,
     stop('data must be an sf object')
   }
 
-  # if (length(variables) <= 1) {
-  #   stop('There should be more than 1 numeric variables')
-  # }
+  if (length(variables) <= 1) {
+    stop('There should be more than 1 numeric variables.',
+    '\nConsider using paar::fuzzy_k_means if you have only one variable',
+    ' for clustering process.')
+  }
 
   if (between(explainedVariance, 0, 1)) {
     explainedVariance <- explainedVariance * 100
