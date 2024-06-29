@@ -41,7 +41,7 @@ summary.paar <- function(object, ...) {
 #' @inheritParams base::print
 #' @export
 
-print.summary.paar <- function(x, digits) {
+print.summary.paar <- function(x, digits, ...) {
   fr_condition_table <- x[['n']]
   pr_f_condition_table <- x[['percentage']]
   pr_f_condition_table <-
@@ -84,6 +84,8 @@ print.paar <- function(x, n = 3, ...) {
 #' Bind outlier condition to an object.
 #' @name bind
 #' @return \code{cbind} called with m.
+#' @param ... objects to bind.
+#' @inheritParams base::cbind
 #' @export
 #'
 cbind.paar = function(..., deparse.level = 1) {
