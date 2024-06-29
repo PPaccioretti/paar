@@ -31,4 +31,8 @@ Suggests:
     concaveman,
     units,
     SpatialPack,
-    stars
+    stars,
+    knitr,
+    rmarkdown
+URL: https://ppaccioretti.github.io/paar/
+VignetteBuilder: knitr
