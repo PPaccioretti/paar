@@ -40,6 +40,8 @@ library(ggplot2)
 data("barley", package = 'paar')
 ```
 
+
+
 The `barley` dataset is a `data.frame` object. We will convert it to a
 `sf` object using the `st_as_sf` function. The `coords` argument
 specifies the columns that contain the coordinates. The `crs` argument
@@ -59,8 +61,8 @@ visualize the yield data.
 plot(barley_sf["Yield"])
 
 ggplot(barley_sf) +
-  geom_sf(aes(fill = Yield)) +
-  scale_fill_viridis_c() +
+  geom_sf(aes(color = Yield)) +
+  scale_color_viridis_c() +
   theme_minimal()
 ```
 
@@ -94,12 +96,15 @@ is installed, otherwise, the `sf::st_convex_hull` function is used.
 
 
 ```{r}
-barley_clean <- depurate(barley_sf, 
-                         y = 'Yield',
-                         toremove = c("edges", "outlier", "inlier"))
+barley_clean_paar <-
+  depurate(barley_sf, 
+           y = 'Yield',
+           toremove = c("edges", "outlier", "inlier"))
 
 
 ```
+
+## Summary of the cleaning process
 
 
 The `depurate` function returns an object of class `paar`. The
@@ -108,28 +113,100 @@ of each observation (`$condition`). If the condition is `NA` means that
 the observation was not removed.
 
 ```{r}
-barley_clean
+barley_clean_paar
 ```
 
 The `summary` function can be used to get a summary of the percentage of
-considered ouliers and the number of observations removed.
+considered ouliers and the number of observations removed. The `summary` function
+returns a `data.frame` object.
 
 
 ```{r}
-summary_table <- summary(barley_clean)
+summary_table <- summary(barley_clean_paar)
 summary_table
 ```
+
+Filtered dataset can be extracted from the `paar` object using the `$depurated_data`
+
+```{r}
+barley_clean <- barley_clean_paar$depurated_data
+```
+
+Final Yield values distribution can be plotted.
+
+```{r, fig.height=2, fig.height=5, out.width="50%", fig.show="hold"}
+plot(barley_clean["Yield"])
+
+ggplot(barley_clean) +
+  geom_sf(aes(color = Yield)) +
+  scale_color_viridis_c() +
+  theme_minimal()
+```
+
+
+A comparison can be made between the original data and the cleaned data.
+
+```{r, fig.height=2, fig.height=5, out.width="50%", fig.show="hold"}
+
+
+ggplot(barley_sf) +
+  geom_sf(aes(color = Yield)) +
+  scale_color_viridis_c() +
+  theme_minimal()
+
+
+ggplot(barley_clean) +
+  geom_sf(aes(color = Yield)) +
+  scale_color_viridis_c() +
+  theme_minimal()
+```
+
+Also, the distribution of the yield values can be compared.
+
+```{r, fig.height=2, fig.height=5, out.width="50%", fig.show="hold"}
+
+ggplot(barley_sf, aes(x = Yield)) +
+  geom_histogram()
+
+ggplot(barley_clean, aes(x = Yield)) +
+  geom_histogram()
+```
+
+
+## Plotting the condition of each observation
 
 The condition of each observation can be combined to the original data using the 
 `cbind` function.
 
-
 ```{r}
-barley_sf <- cbind(condition = barley_clean$condition, barley_sf)
+barley_sf <- cbind(barley_clean_paar, barley_sf)
 
 ```
 
+The `barley_sf` object now contains the condition of each observation. The
+`condition` column contains the condition of each observation. The condition
+can be `NA` if the observation was not removed, `edges` if the observation was
+removed in the _edges_ step, `outlier` if the observation was removed in the
+_outliers_ step, and `inlier` if the observation was removed in the _inliers_
+step.
+Results can be plotted to visualize the observations.
 
+
+
+```{r}
+plot(barley_sf[,'condition'], col = as.numeric(as.factor(barley_sf$condition)))
+legend("topright", legend = levels(as.factor(barley_sf$condition)), fill = 1:4)
+```
+
+```{r}
+ggplot(barley_sf) +
+  geom_sf(aes(color = condition)) +
+  scale_fill_viridis_d() +
+  scale_color_discrete(
+    labels = function(k) {k[is.na(k)] <- "normal"; k},
+    na.value = "#44214234") +
+  theme_minimal()
+```
 
 
 
