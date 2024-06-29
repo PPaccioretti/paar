@@ -33,6 +33,7 @@ Suggests:
     SpatialPack,
     stars,
     knitr,
-    rmarkdown
+    rmarkdown,
+    ggplot2
 URL: https://ppaccioretti.github.io/paar/
 VignetteBuilder: knitr
