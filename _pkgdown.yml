@@ -2,3 +2,7 @@ url: https://ppaccioretti.github.io/paar/
 template:
   bootstrap: 5
 
+navbar:
+  structure:
+    left:  [intro, articles, reference, tutorials, news]
+    right: [search, github]

@@ -22,9 +22,18 @@ knitr::opts_chunk$set(
 message("No package ggplot2 available. Code chunks using that package will not be evaluated.")
 ```
 
-Usually, yield data comes with many noisy observations. This vignette will show how to preprocess yield data to remove both, spatial and global outliers. The protocol for error removal follows the protocol proposed by @Vega2019. Functions from this package are used in the software FastMapping [@Paccioretti2020]. For the tutorial we will use the `barley` dataset that comes with the `paar` package. The `barley` data contains barley grain yield which were obtained using calibrated commercial yield monitors, mounted on combines equipped with DGPS. The data is not a `sf` object format. We will convert it to an `sf` object first.
+Usually, yield data comes with many noisy observations. This vignette will show
+how to preprocess yield data to remove both, spatial and global outliers. The
+protocol for error removal follows the protocol proposed by @Vega2019. Functions
+from this package are used in FastMapping software [@Paccioretti2020]. For the 
+tutorial we will use the `barley` dataset that comes with the `paar` package. 
+The `barley` data contains barley grain yield which were obtained using 
+calibrated commercial yield monitors, mounted on combines equipped with DGPS.
+The data is not a `sf` object format. We will convert it to an `sf` object first.
 
-First, we will load the `paar` package, the `sf` package for spatial data manipulation, `ggplot2` for plotting, and the `barley` dataset that comes with the `paar` package.
+First, we will load the `paar` package, the `sf` package for spatial data 
+manipulation, `ggplot2` for plotting, and the `barley` dataset that comes 
+with the `paar` package.
 
 ```{r setup}
 library(paar)
@@ -34,7 +43,10 @@ require(ggplot2)
 data("barley", package = 'paar')
 ```
 
-The `barley` dataset is a `data.frame` object. We will convert it to a `sf` object using the `st_as_sf` function. The `coords` argument specifies the columns that contain the coordinates. The `crs` argument specifies the coordinate reference system. The `barley` dataset is in UTM zone 20S.
+The `barley` dataset is a `data.frame` object. We will convert it to a `sf` 
+object using the `st_as_sf` function. The `coords` argument specifies the 
+columns that contain the coordinates. The `crs` argument specifies the 
+coordinate reference system. The `barley` dataset is in UTM zone 20S.
 
 ```{r}
 barley_sf <- st_as_sf(barley, 
@@ -75,9 +87,21 @@ ggplot(barley_sf) +
   theme_minimal()
 ```
 
-The protocol proposed by [@Vega2019], is implemented in the function `depurate` and consists of three steps: 1. Remove border observations (*edges*). 2. Remove global outliers (*outliers*). 3. Remove spatial outliers (*inliers*).
+The protocol proposed by [@Vega2019], is implemented in the function `depurate` 
+and consists of three steps: 
+1. Remove border observations (*edges*). 
+2. Remove global outliers (*outliers*). 
+3. Remove spatial outliers (*inliers*).
 
-The `depurate` function takes an `sf` object as input and returns an object of class `paar`. Any combination of the three steps can be done using the `depurate` function. The argument `to_remove` specifies which steps to perform. The argument `y` specifies the column name of the variable to be cleaned. A field boundary is necessary to remove the *edges* observations. If a polygon is not provided in the `poly_border` argument, the function will make a hull, around the data and remove the observation that are 10m from the hull. The hull is made using `concaveman::concaveman` function if the package is installed, otherwise, the `sf::st_convex_hull` function is used.
+The `depurate` function takes an `sf` object as input and returns an object
+of class `paar`. Any combination of the three steps can be done using 
+the `depurate` function. The argument `to_remove` specifies which steps to 
+perform. The argument `y` specifies the column name of the variable to be 
+cleaned. A field boundary is necessary to remove the *edges* observations. 
+If a polygon is not provided in the `poly_border` argument, the function will 
+make a hull, around the data and remove the observation that are 10m from the 
+hull. The hull is made using `concaveman::concaveman` function if the package 
+is installed, otherwise, the `sf::st_convex_hull` function is used.
 
 ```{r}
 barley_clean_paar <-
@@ -90,13 +114,18 @@ barley_clean_paar <-
 
 ## Summary of the cleaning process
 
-The `depurate` function returns an object of class `paar`. The `paar` object contains the cleaned data (`$depurated_data`), and the condition of each observation (`$condition`). If the condition is `NA` means that the observation was not removed.
+The `depurate` function returns an object of class `paar`. The `paar` object 
+contains the cleaned data (`$depurated_data`), and the condition of each 
+observation (`$condition`). If the condition is `NA` means that the observation
+was not removed.
 
 ```{r}
 barley_clean_paar
 ```
 
-The `summary` function can be used to get a summary of the percentage of considered ouliers and the number of observations removed. The `summary` function returns a `data.frame` object.
+The `summary` function can be used to get a summary of the percentage of 
+considered ouliers and the number of observations removed. The `summary` 
+function returns a `data.frame` object.
 
 ```{r}
 summary_table <- summary(barley_clean_paar)
@@ -174,7 +203,13 @@ The condition of each observation can be combined to the original data using the
 barley_sf <- cbind(barley_clean_paar, barley_sf)
 ```
 
-The `barley_sf` object now contains the condition of each observation. The `condition` column contains the condition of each observation. The condition can be `NA` if the observation was not removed, `edges` if the observation was removed in the *edges* step, `outlier` if the observation was removed in the *outliers* step, and `inlier` if the observation was removed in the *inliers* step. Results can be plotted to visualize the observations.
+The `barley_sf` object now contains the condition of each observation. 
+The `condition` column contains the condition of each observation. The 
+condition can be `NA` if the observation was not removed, `edges` if the 
+observation was removed in the *edges* step, `outlier` if the observation 
+was removed in the *outliers* step, and `inlier` if the observation was 
+removed in the *inliers* step. Results can be plotted to visualize the 
+observations.
 
 -   The `plot` function can be used to plot the condition of each observation.
 
