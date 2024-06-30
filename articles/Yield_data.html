@@ -279,7 +279,8 @@ data.</p>
 <h2 id="plotting-the-condition-of-each-observation">Plotting the condition of each observation<a class="anchor" aria-label="anchor" href="#plotting-the-condition-of-each-observation"></a>
 </h2>
 <p>The condition of each observation can be combined to the original
-data using the <code>cbind</code> function.</p>
+data using the <code>cbind</code> function. The <code>paar</code> object
+must be used as first argument in the <code>cbind</code> function.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">barley_sf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">barley_clean_paar</span>, <span class="va">barley_sf</span><span class="op">)</span></span></code></pre></div>
 <p>The <code>barley_sf</code> object now contains the condition of each
