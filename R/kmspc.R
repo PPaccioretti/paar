@@ -25,7 +25,7 @@
 #' @return a list with classification results and indices to select best number of
 #' clusters.
 #' @export
-#'
+#' @example inst/examples/kmspc.R
 #'
 kmspc <- function(data,
                   variables,
@@ -103,11 +103,11 @@ kmspc <- function(data,
   # PCA results -----
   pca_results <- NULL
 
-  if(all_results) {
+  if (all_results) {
     pca_results <- list(pca_results_all = pca)
   }
 
-  if(!only_spca_results) {
+  if (!only_spca_results) {
 
     autov_pca <- pca$eig
     propvar_pca <- autov_pca / sum(autov_pca)
@@ -157,13 +157,13 @@ kmspc <- function(data,
   spca_results <- list(spca_summary_results = resultado_ms,
                        eigenvectors_used = ms$c1[, num_sPC, drop = FALSE])
 
-  if(all_results) {
+  if (all_results) {
     spca_results <- append(spca_results,
                            list(spca_results_all = ms))
-  }
 
-  pca_results <- append(pca_results,
-                        spca_results)
+    pca_results <- append(pca_results,
+                          spca_results)
+  }
 
 
   data_clust <- ms$li[num_sPC]

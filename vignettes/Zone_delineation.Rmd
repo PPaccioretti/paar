@@ -1,0 +1,125 @@
+---
+title: "Zone delineation"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Zone delineation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: references.bib
+---
+
+```{r, include = FALSE}
+has_ggplot <- requireNamespace("ggplot2")
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(paar)
+library(sf)
+require(ggplot2)
+```
+
+Multivariate zone delineation can be done using `kmspc` function, whereas 
+univariate zone delineation can be done with `fyzzy_k_means` function.
+
+Multivariate function implements the protocol proposed by @Cordoba2016, which
+performs a clustering with the `kmeans` function using as an input the spatial
+principal components (sPC) of the data. 
+The function requires an `sf` object with the data to be clustered, and more than
+one numeric variable. The function by default returns a list with the 
+following components:
+- `summaryResults`: a `data.frame` with 
+- `indices`: a `data.frame` with indices to help to chose the optimal number 
+of clusters.
+- `cluster`: the cluster number assigned to each observation.
+
+For this example we will use the `wheat` dataset that comes with the `paar` package.
+The `data.frame` has apparent electrical conductivity (ECa) meassured at 
+two depths, elevation data, soil depth, and wheat gran yield. All variables 
+have been interpolated to an unique grid and then merged in a single `data.frame`.
+
+
+```{r}
+data(wheat, package = 'paar')
+
+wheat_sf <- st_as_sf(wheat,
+                     coords = c('x', 'y'),
+                     crs = 32720)
+```
+
+```{r}
+plot(wheat_sf)
+```
+
+The function `kmspc` requires the `sf` object with the data to be clustered, and
+the number of clusters (zones) to be delineated.
+For the sPC process, is necessary to specify the distance in wshich observations 
+will be considered neighbors. The `ldist` and `udist` arguments specify the
+lower and upper distance thresholds, respectively. The `explainedVariance`
+argument specifies the minimum value of explained variance that the Principal 
+Component to be used for the cluster process should explain. The `center` 
+argument specifies if the data should be centered before the sPC process 
+(default `TRUE`).
+
+```{r}
+# Run the kmspc function
+kmspc_results <- 
+  kmspc(wheat_sf,
+        number_cluster = 2:4,
+        explainedVariance = 70,
+        ldist = 0,
+        udist = 40,
+        center = TRUE)
+
+```
+
+To help the user to chose the optimal number of clusters, the function returns
+a `data.frame` with indices (`Xie Beni`, `Partition Coefficient`, 
+`Entropy of Partition`, and `Summary Index`).
+The `Summary Index` is a combination of the indices to obtain a measure of the
+information reported by each index. In this example, the optimuin number of
+cluster is 2. For each index, lower the value better the
+clustering. More information can be found in @Paccioretti2020.
+
+
+```{r}
+kmspc_results$indices
+```
+
+
+The cluster for each observation can be found in the `cluster` component of the
+`kmspc` object. The `cluster` component is a `data.frame` with the cluster
+number assigned to each observation.
+
+```{r}
+head(kmspc_results$cluster)
+```
+
+The clusters can be combined to the original data using the `cbind` function.
+
+```{r}
+wheat_clustered <- cbind(wheat_sf, kmspc_results$cluster)
+```
+
+
+This cluster can be plotted with the `plot` function.
+
+```{r}
+plot(wheat_clustered[, "Cluster_2"])
+```
+
+
+Also, ggplot can be used to plot the clusters.
+```{r eval = !has_ggplot, echo = FALSE, comment = NA}
+message("No package ggplot2 available. Code chunks using that package will not be evaluated.")
+```
+
+```{r, eval = has_ggplot}
+ggplot(wheat_clustered) +
+  geom_sf(aes(color = Cluster_2)) +
+  theme_minimal()
+```
+
