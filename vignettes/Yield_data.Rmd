@@ -197,7 +197,9 @@ ggplot(barley_clean, aes(x = Yield)) +
 
 ## Plotting the condition of each observation
 
-The condition of each observation can be combined to the original data using the `cbind` function.
+The condition of each observation can be combined to the original data using the
+`cbind` function. The `paar` object must be used as first argument in the 
+`cbind` function.
 
 ```{r}
 barley_sf <- cbind(barley_clean_paar, barley_sf)

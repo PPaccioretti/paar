@@ -28,23 +28,7 @@
 #'
 #' @return an object of class \code{paar}
 #' @export
-#'
-#' @examples
-#' library(sf)
-#' data(barley)
-#'
-#' #Convert to an sf object
-#' barley <- st_as_sf(barley,
-#'                    coords = c("X", "Y"),
-#'                    crs = 32720)
-#'
-#' depurated <-
-#'   depurate(barley,
-#'            "Yield")
-#'
-#' # Summary of depurated data
-#' summary(depurated)
-#'
+#' @example inst/examples/depurate.R
 
 depurate <- function(x,
                      y,
