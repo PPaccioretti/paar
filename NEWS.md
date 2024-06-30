@@ -1,5 +1,6 @@
 # paar 0.0.0.9003 (development version)
 
+* Build vignette for `kmspc` function. 
 * Build vignette for `depurate` function. 
 * New `cbind.paar` function to bind the condition of one paar object with a 
 `data.frame` or `sf` object.
