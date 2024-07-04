@@ -379,8 +379,13 @@ make_clasification <- function(data, number_cluster, fuzzyness, distance) {
 
 
 #' @noRd
-dudy_pca <- function(df, row.w = rep(1, nrow(df))/nrow(df), col.w = rep(1,
-                                                                         ncol(df)), center = TRUE, scale = TRUE, scannf = TRUE, nf = 2)
+dudy_pca <- function(df,
+                     row.w = rep(1, nrow(df))/nrow(df),
+                     col.w = rep(1, ncol(df)),
+                     center = TRUE,
+                     scale = TRUE,
+                     scannf = TRUE,
+                     nf = 2)
 {
   df <- as.data.frame(df)
   nc <- ncol(df)
@@ -455,17 +460,6 @@ as_dudi <-
     eig1 <- eigen(df, symmetric = TRUE)
     eig <- eig1$values
     rank <- sum((eig / eig[1]) > tol)
-    # if (scannf) {
-    #   # if (exists("ade4TkGUIFlag")) {
-    #   #   nf <- ade4TkGUI::chooseaxes(eig, rank)
-    #   # }
-    #   # else {
-    #     # barplot(eig[1:rank])
-    #     # cat("Select the number of axes: ")
-    #     # nf <- as.integer(readLines(n = 1))
-    #     # # messageScannf(call, nf)
-    #   }
-    # }
     if (nf <= 0)
       nf <- 2
     if (nf > rank)
@@ -517,11 +511,6 @@ as_dudi <-
   }
 
 
-
-
-
-
-
 #' @noRd
 multispati <-
   function(dudi,
@@ -550,15 +539,6 @@ multispati <-
     res$eig <- covar$values[abs(covar$values) > NEARZERO]
     ndim <- length(res$eig)
     covar$vectors <- covar$vectors[, abs(covar$values) > NEARZERO]
-
-    # if (scannf) {
-    #   barplot(res$eig)
-    #   cat("Select the number of axes with positive spatial autocorrelation: ")
-    #   nfposi <- as.integer(readLines(n = 1))
-    #
-    #   cat("Select the number of axes with negative spatial autocorrelation: ")
-    #   nfnega <- as.integer(readLines(n = 1))
-    # }
 
     if (nfposi <= 0)
       nfposi <- 1
@@ -646,11 +626,7 @@ summary.multispati <- function(object, ...) {
     ratio = ratio,
     moran = moran
   )
-  cat("\nScores from the initial duality diagram:\n")
-  print(res)
 
-  ## les scores de l'analyse spatiale
-  ## on recalcule l'objet en gardant tous les axes
   eig <- object$eig
   nfposi <- object$nfposi
   nfnega <- object$nfnega
@@ -740,7 +716,7 @@ print.multispati <- function(x, ...)
 }
 
 
-## This function is from e1071 package fixed so can be run in R-4.2.0
+## This function is from e1071 package fix so can be run in > R-4.2.0
 
 #' @noRd
 fclustIndex <- function(y, x, index = "all")

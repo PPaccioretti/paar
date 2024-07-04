@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# paar
+# paar <a href="https://ppaccioretti.github.io/paar/"><img src="man/figures/logo.png" align="right" height="139" alt="paar website" /></a>
 
 <!-- badges: start -->
 
@@ -38,6 +38,7 @@ data.
 ``` r
 library(paar)
 library(sf)
+#> Warning: package 'sf' was built under R version 4.3.3
 data("barley", package = 'paar')
 ```
 
@@ -56,16 +57,13 @@ barley_dep <-
            "Yield")
 #> Concave hull algorithm is computed with
 #> concavity = 2 and length_threshold = 0
-```
-
-``` r
 
 # Summary of depurated data
 summary(barley_dep)
-#>       normal point               border   spatial outlier MP   
-#>         5673 (77%)            964 (13%)           343 (4.6%)   
-#> spatial outlier LM           global min              outlier   
-#>         309 (4.2%)            99 (1.3%)           6 (0.081%)
+#>       normal point             border spatial outlier MP spatial outlier LM 
+#>         5673 (77%)          964 (13%)         343 (4.6%)         309 (4.2%) 
+#>         global min            outlier 
+#>          99 (1.3%)         6 (0.081%)
 ```
 
 Spatial yield values before and after depuration process can be plotted
