@@ -191,8 +191,8 @@ remove_border <- function(x,
       stop('poly_border must be an sf object', call. = FALSE)
     }
 
-    if (unique(sf::st_geometry_type(poly_border)) != 'POLYGON') {
-      stop('poly_border must have only POLYGON as geometry type',
+    if (!unique(sf::st_geometry_type(poly_border)) %in% c('POLYGON', 'MULTIPOLYGON')) {
+      stop('poly_border must have only POLYGON or MULTIPOLYGON as geometry type',
            call. = FALSE)
     }
 
