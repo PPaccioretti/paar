@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">paar</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9003</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,7 +33,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Compare spatial zone means</h1>
-      <small class="dont-index">Source: <a href="https://github.com/PPaccioretti/paar/blob/main/R/compare_zones.R" class="external-link"><code>R/compare_zones.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/PPaccioretti/paar/blob/main/R/compare_zone.R" class="external-link"><code>R/compare_zone.R</code></a></small>
       <div class="d-none name"><code>compare_zone.Rd</code></div>
     </div>
 
@@ -90,11 +90,17 @@
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p><code>list</code> with differences and descriptive_stat</p>
     </div>
+    <div class="section level2">
+    <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
+    <p>Paccioretti, P., Córdoba, M., &amp; Balzarini, M. (2020).
+FastMapping: Software to create field maps and identify management zones
+in precision agriculture. Computers and Electronics in Agriculture, 175,
+105556 https://doi.org/10.1016/j.compag.2020.105556.</p>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Linking to GEOS 3.10.2, GDAL 3.4.1, PROJ 8.2.1; sf_use_s2() is TRUE</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">wheat</span>, package <span class="op">=</span> <span class="st">"paar"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>

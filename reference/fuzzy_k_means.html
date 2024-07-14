@@ -13,7 +13,7 @@ possible because data set has only 1 variable."><meta property="og:image" conten
 
     <a class="navbar-brand me-2" href="../index.html">paar</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9003</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -94,6 +94,56 @@ absolute error is computed. Abbreviations are also accepted.</p></dd>
 clusters.</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">wheat</span>, package <span class="op">=</span> <span class="st">'paar'</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Transform the data.frame into a sf object</span></span></span>
+<span class="r-in"><span><span class="va">wheat_sf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html" class="external-link">st_as_sf</a></span><span class="op">(</span><span class="va">wheat</span>,</span></span>
+<span class="r-in"><span>                     coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'x'</span>, <span class="st">'y'</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                     crs <span class="op">=</span> <span class="fl">32720</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Run the fuzzy_k_means function</span></span></span>
+<span class="r-in"><span><span class="va">fuzzy_k_means_results</span> <span class="op">&lt;-</span> <span class="fu">fuzzy_k_means</span><span class="op">(</span><span class="va">wheat_sf</span>,</span></span>
+<span class="r-in"><span>                               variables <span class="op">=</span> <span class="st">'Tg'</span>,</span></span>
+<span class="r-in"><span>                               number_cluster <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Print the summaryResults</span></span></span>
+<span class="r-in"><span><span class="va">fuzzy_k_means_results</span><span class="op">$</span><span class="va">summaryResults</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Clusters Iterations        SSDW</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1        2         20 0.020516877</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2        3         43 0.010596950</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3        4         34 0.006439882</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Print the indices</span></span></span>
+<span class="r-in"><span><span class="va">fuzzy_k_means_results</span><span class="op">$</span><span class="va">indices</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Num. Cluster     Xie Beni Partition Coefficient Entropy of Partition</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1            2 2.340529e-05             0.9709446           0.04784131</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2            3 2.407361e-05             0.9603949           0.06536385</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3            4 2.348571e-05             0.9582419           0.06906399</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Summary Index</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1      1.557271</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2      1.695319</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3      1.710485</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Print the cluster</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">fuzzy_k_means_results</span><span class="op">$</span><span class="va">cluster</span>, <span class="fl">5</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      Cluster_2 Cluster_3 Cluster_4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] "2"       "2"       "2"      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] "2"       "2"       "2"      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3,] "2"       "2"       "2"      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4,] "2"       "2"       "2"      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5,] "2"       "2"       "2"      </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Combine the results in a single object</span></span></span>
+<span class="r-in"><span><span class="va">wheat_clustered</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">wheat_sf</span>, <span class="va">fuzzy_k_means_results</span><span class="op">$</span><span class="va">cluster</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Plot the results</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">wheat_clustered</span><span class="op">[</span>, <span class="st">"Cluster_2"</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="fuzzy_k_means-1.png" alt="" width="700" height="433"></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

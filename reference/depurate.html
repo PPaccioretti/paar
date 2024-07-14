@@ -11,7 +11,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">paar</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9003</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -76,7 +76,7 @@
 
 <dt id="arg-y">y<a class="anchor" aria-label="anchor" href="#arg-y"></a></dt>
 <dd><p><code>character</code> with the name of the variable to use for
-depuration process</p></dd>
+depuration/filtering process</p></dd>
 
 
 <dt id="arg-toremove">toremove<a class="anchor" aria-label="anchor" href="#arg-toremove"></a></dt>
@@ -138,8 +138,16 @@ the result of <code><a href="https://joelgombin.github.io/concaveman/reference/c
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>an object of class <code>paar</code></p>
-    </div>
+    <p>an object of class <code>paar</code> with two elements:</p><dl><dt>depurated_data</dt>
+<dd><p><code>sf</code> object with the data after the removal
+ process</p></dd>
+
+ <dt>condition</dt>
+<dd><p><code>character</code> vector with the condition of each
+ observation</p></dd>
+
+
+</dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Possible values for <code>toremove</code> are one or more elements of:</p><dl><dt>edges</dt>

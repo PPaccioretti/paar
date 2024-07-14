@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">paar</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9003</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -150,28 +150,28 @@ clusters.</p>
 <span class="r-in"><span><span class="va">kmspc_results</span><span class="op">$</span><span class="va">summaryResults</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Clusters Iterations      SSDW</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1        2         18 1.8713082</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2        3         39 1.3057409</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3        4         24 0.9948927</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2        3         56 1.3057409</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3        4         23 0.9948927</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Print the indices</span></span></span>
 <span class="r-in"><span><span class="va">kmspc_results</span><span class="op">$</span><span class="va">indices</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Num. Cluster     Xie Beni Partition Coefficient Entropy of Partition</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1            2 3.520943e-05             0.9611984           0.06489999</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2            3 5.479512e-05             0.9391112           0.10430716</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3            4 5.825774e-05             0.9293076           0.12350410</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1            2 3.520996e-05             0.9611975           0.06490128</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2            3 5.479347e-05             0.9391130           0.10430426</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3            4 5.827060e-05             0.9293032           0.12351250</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Summary Index</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1      1.281173</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2      1.597661</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3      1.713110</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1      1.281105</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2      1.597481</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3      1.713107</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Print the cluster</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">kmspc_results</span><span class="op">$</span><span class="va">cluster</span>, <span class="fl">5</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      Cluster_2 Cluster_3 Cluster_4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] "2"       "3"       "2"      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] "2"       "3"       "2"      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [3,] "2"       "3"       "2"      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [4,] "2"       "2"       "2"      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [5,] "2"       "2"       "2"      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] "1"       "3"       "2"      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] "1"       "3"       "2"      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3,] "1"       "3"       "2"      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4,] "1"       "2"       "2"      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5,] "1"       "2"       "2"      </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Combine the results in a single object</span></span></span>
 <span class="r-in"><span><span class="va">wheat_clustered</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">wheat_sf</span>, <span class="va">kmspc_results</span><span class="op">$</span><span class="va">cluster</span><span class="op">)</span></span></span>
