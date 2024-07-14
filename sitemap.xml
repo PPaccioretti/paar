@@ -1,75 +1,27 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://ppaccioretti.github.io/paar/404.html</loc>
-  </url>
-  <url>
-    <loc>https://ppaccioretti.github.io/paar/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>https://ppaccioretti.github.io/paar/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>https://ppaccioretti.github.io/paar/articles/Yield_data.html</loc>
-  </url>
-  <url>
-    <loc>https://ppaccioretti.github.io/paar/articles/Zone_delineation.html</loc>
-  </url>
-  <url>
-    <loc>https://ppaccioretti.github.io/paar/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://ppaccioretti.github.io/paar/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://ppaccioretti.github.io/paar/index.html</loc>
-  </url>
-  <url>
-    <loc>https://ppaccioretti.github.io/paar/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://ppaccioretti.github.io/paar/reference/barley.html</loc>
-  </url>
-  <url>
-    <loc>https://ppaccioretti.github.io/paar/reference/bind.html</loc>
-  </url>
-  <url>
-    <loc>https://ppaccioretti.github.io/paar/reference/compare_zone.html</loc>
-  </url>
-  <url>
-    <loc>https://ppaccioretti.github.io/paar/reference/depurate.html</loc>
-  </url>
-  <url>
-    <loc>https://ppaccioretti.github.io/paar/reference/fuzzy_k_means.html</loc>
-  </url>
-  <url>
-    <loc>https://ppaccioretti.github.io/paar/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://ppaccioretti.github.io/paar/reference/kmspc.html</loc>
-  </url>
-  <url>
-    <loc>https://ppaccioretti.github.io/paar/reference/print.paar.html</loc>
-  </url>
-  <url>
-    <loc>https://ppaccioretti.github.io/paar/reference/print.summary.paar.html</loc>
-  </url>
-  <url>
-    <loc>https://ppaccioretti.github.io/paar/reference/remove_border.html</loc>
-  </url>
-  <url>
-    <loc>https://ppaccioretti.github.io/paar/reference/remove_inlier.html</loc>
-  </url>
-  <url>
-    <loc>https://ppaccioretti.github.io/paar/reference/remove_outlier.html</loc>
-  </url>
-  <url>
-    <loc>https://ppaccioretti.github.io/paar/reference/spatial_t_test.html</loc>
-  </url>
-  <url>
-    <loc>https://ppaccioretti.github.io/paar/reference/summary.paar.html</loc>
-  </url>
-  <url>
-    <loc>https://ppaccioretti.github.io/paar/reference/wheat.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://ppaccioretti.github.io/paar/404.html</loc></url>
+<url><loc>https://ppaccioretti.github.io/paar/LICENSE-text.html</loc></url>
+<url><loc>https://ppaccioretti.github.io/paar/LICENSE.html</loc></url>
+<url><loc>https://ppaccioretti.github.io/paar/articles/Yield_data.html</loc></url>
+<url><loc>https://ppaccioretti.github.io/paar/articles/Zone_delineation.html</loc></url>
+<url><loc>https://ppaccioretti.github.io/paar/articles/index.html</loc></url>
+<url><loc>https://ppaccioretti.github.io/paar/authors.html</loc></url>
+<url><loc>https://ppaccioretti.github.io/paar/index.html</loc></url>
+<url><loc>https://ppaccioretti.github.io/paar/news/index.html</loc></url>
+<url><loc>https://ppaccioretti.github.io/paar/reference/barley.html</loc></url>
+<url><loc>https://ppaccioretti.github.io/paar/reference/bind.html</loc></url>
+<url><loc>https://ppaccioretti.github.io/paar/reference/compare_zone.html</loc></url>
+<url><loc>https://ppaccioretti.github.io/paar/reference/depurate.html</loc></url>
+<url><loc>https://ppaccioretti.github.io/paar/reference/fuzzy_k_means.html</loc></url>
+<url><loc>https://ppaccioretti.github.io/paar/reference/index.html</loc></url>
+<url><loc>https://ppaccioretti.github.io/paar/reference/kmspc.html</loc></url>
+<url><loc>https://ppaccioretti.github.io/paar/reference/print.paar.html</loc></url>
+<url><loc>https://ppaccioretti.github.io/paar/reference/print.summary.paar.html</loc></url>
+<url><loc>https://ppaccioretti.github.io/paar/reference/remove_border.html</loc></url>
+<url><loc>https://ppaccioretti.github.io/paar/reference/remove_inlier.html</loc></url>
+<url><loc>https://ppaccioretti.github.io/paar/reference/remove_outlier.html</loc></url>
+<url><loc>https://ppaccioretti.github.io/paar/reference/spatial_t_test.html</loc></url>
+<url><loc>https://ppaccioretti.github.io/paar/reference/summary.paar.html</loc></url>
+<url><loc>https://ppaccioretti.github.io/paar/reference/wheat.html</loc></url>
 </urlset>
+
