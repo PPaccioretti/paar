@@ -1,7 +1,7 @@
 #' MULTISPATI-PCA clustering
 #'
 #'
-#' @inheritParams remove_inlier
+#' @inheritParams depurate
 #' @param data sf object
 #' @param variables variables to use for clustering, if missing, all numeric
 #' variables will be used

@@ -4,12 +4,33 @@
 #'  outliers and spatial outliers or local defective observations. Default
 #'  values are optimized for precision agricultural data.
 #'
-#' @inheritParams remove_border
-#' @inheritParams remove_outlier
-#' @inheritParams remove_inlier
+#' @param x an \code{sf} points object
+#' @param y \code{character} with the name of the variable to use for
+#'   depuration/filtering process
 #' @param toremove \code{character} vector specifying the procedure to
 #'   implement for errors removal. Default 'edges', 'outlier', 'inlier'.
 #'   See Details.
+#' @param crs coordinate reference system: integer with the EPSG code,
+#'   or character with proj4string to convert coordinates if \code{x} has
+#'   longitude/latitude data
+#' @param buffer \code{numeric} distance in meters to be removed. Negative
+#'   values are recommended
+#' @param ylimitmax \code{numeric} of length 1 indicating the maximum limit
+#'   for the \code{y} variable. If \code{NA} \code{Inf} is assumed
+#' @param ylimitmin \code{numeric} of length 1 indicating the minimum limit
+#'   for the \code{y} variable. If \code{NA} \code{-Inf} is assumed
+#' @param sdout \code{numeric} values outside the interval
+#'  \eqn{mean ± sdout × sdout} values will be removed
+#' @param ldist \code{numeric} lower distance bound to identify neighbors
+#' @param udist \code{numeric} upper distance bound to identify neighbors
+#' @param criteria \code{character} with "LM" and/or "MP" for methods to
+#'    identify spatial outliers
+#' @param zero.policy default NULL, use global option value;
+#'   if FALSE stop with error for any empty neighbors sets,
+#'   if TRUE permit the weights list to be formed with zero-length
+#'   weights vectors
+#' @param poly_border \code{sf} object with one polygon or NULL. Can be
+#' the result of \code{concaveman::concaveman}
 #'
 #' @details
 #' Possible values for \code{toremove} are one or more elements of:
@@ -26,7 +47,13 @@
 #' automating error removal from yield maps. Precision Agric 20, 1030–1044
 #' (2019). https://doi.org/10.1007/s11119-018-09632-8
 #'
-#' @return an object of class \code{paar}
+#' @return an object of class \code{paar} with two elements:
+#' \describe{
+#'  \item{depurated_data}{\code{sf} object with the data after the removal
+#'  process}
+#'  \item{condition}{\code{character} vector with the condition of each
+#'  observation}
+#'  }
 #' @export
 #' @example inst/examples/depurate.R
 
@@ -141,7 +168,8 @@ depurate <- function(x,
 #'   values are recommended
 #' @param poly_border \code{sf} object with one polygon or NULL. Can be
 #' the result of \code{concaveman::concaveman}
-#'
+#' @noRd
+#' @keywords internal
 remove_border <- function(x,
                           crs = NULL,
                           buffer,
@@ -282,8 +310,8 @@ remove_border <- function(x,
 #'   for the \code{y} variable. If \code{NA} \code{-Inf} is assumed
 #' @param sdout \code{numeric} values outside the interval
 #'  \eqn{mean ± sdout × sdout} values will be removed
-#'
-#'
+#' @noRd
+#' @keywords internal
 remove_outlier <- function(x,
                            y,
                            ylimitmax = NA,
@@ -351,7 +379,8 @@ remove_outlier <- function(x,
 #'   if FALSE stop with error for any empty neighbors sets,
 #'   if TRUE permit the weights list to be formed with zero-length
 #'   weights vectors
-#'
+#' @noRd
+#' @keywords internal
 remove_inlier <- function(x,
                           y,
                           ldist = 0,
@@ -442,6 +471,7 @@ remove_inlier <- function(x,
 #' @param is_error internal object
 #' @param remove_result internal results from remove_* functions
 #' @noRd
+#' @keywords internal
 is_error_update <- function(is_error, remove_result) {
   # Keeps NA, others are conditions
   is_error_no_na <- is_error[is.na(is_error$because),]

@@ -9,6 +9,7 @@
 #' @return a list with classification results and indices to select best number of
 #' clusters.
 #' @export
+#' @example inst/examples/fuzzy_k_means.R
 #'
 fuzzy_k_means <- function(data,
                           variables,

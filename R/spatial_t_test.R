@@ -8,7 +8,8 @@
 #' columns \code{matrix} or \code{data.frame} specifying coordinates.
 #'
 #' @param variables \code{character} vector with column names to perform ttest
-#'
+#' @return a data.frame with the correlation and p-value for each pair
+#'  of variables
 #' @export
 
 
@@ -16,7 +17,7 @@ spatial_t_test <- function(data, variables) {
 
   if (!requireNamespace("SpatialPack", quietly = TRUE)) {
     stop(paste0("SpatialPack package is needed to perform spatial_t_test", "\n",
-               "Install it with 'install.packages(SpatialPack)'"),
+               "Install it with 'install.packages(\'SpatialPack\')'"),
                .call = FALSE)
   }
 

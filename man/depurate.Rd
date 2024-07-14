@@ -24,7 +24,7 @@ depurate(
 \item{x}{an \code{sf} points object}
 
 \item{y}{\code{character} with the name of the variable to use for
-depuration process}
+depuration/filtering process}
 
 \item{toremove}{\code{character} vector specifying the procedure to
 implement for errors removal. Default 'edges', 'outlier', 'inlier'.
@@ -62,7 +62,13 @@ weights vectors}
 the result of \code{concaveman::concaveman}}
 }
 \value{
-an object of class \code{paar}
+an object of class \code{paar} with two elements:
+\describe{
+ \item{depurated_data}{\code{sf} object with the data after the removal
+ process}
+ \item{condition}{\code{character} vector with the condition of each
+ observation}
+ }
 }
 \description{
 Data can be filtered by null, edge values, global

@@ -16,10 +16,12 @@ agriculture spatial data depuration.
 
 ## Installation
 
-<!-- You can install the released version of paar from [CRAN](https://CRAN.R-project.org) with: -->
-<!-- ``` r -->
-<!-- install.packages("paar") -->
-<!-- ``` -->
+You can install the released version of paar from
+[CRAN](https://CRAN.R-project.org) with (not-yet):
+
+``` r
+# install.packages("paar")
+```
 
 You can install the development version from
 [GitHub](https://github.com/PPaccioretti/paar) with:

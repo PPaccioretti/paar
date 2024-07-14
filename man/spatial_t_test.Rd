@@ -12,6 +12,10 @@ columns \code{matrix} or \code{data.frame} specifying coordinates.}
 
 \item{variables}{\code{character} vector with column names to perform ttest}
 }
+\value{
+a data.frame with the correlation and p-value for each pair
+ of variables
+}
 \description{
 Performs a modified version of the t test to assess the
 correlation between spatial processes. See SpatialPack::modified.ttest for details.

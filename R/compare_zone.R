@@ -10,26 +10,15 @@
 #' @param grid_dim \code{numeric} grid dimentins to estimate spatial variance
 #'
 #' @return \code{list} with differences and descriptive_stat
+#' @references
+#' Paccioretti, P., Córdoba, M., & Balzarini, M. (2020).
+#' FastMapping: Software to create field maps and identify management zones
+#' in precision agriculture. Computers and Electronics in Agriculture, 175,
+#' 105556 https://doi.org/10.1016/j.compag.2020.105556.
 #' @export
 #'
-#' @examples
+#' @example inst/examples/compare_zone.R
 #'
-#' library(sf)
-#' data(wheat, package = "paar")
-#'
-#' ##Convert to an sf object
-#' wheat <- sf::st_as_sf(wheat,
-#'                       coords = c("x", "y"),
-#'                       crs = 32720)
-#' clusters <- paar::kmspc(
-#'   wheat,
-#'   variables = c('CE30', 'CE90', 'Elev', 'Pe', 'Tg'),
-#'   number_cluster = 3:4
-#' )
-#' data_clusters <- cbind(wheat, clusters$cluster)
-#' compare_zone(data_clusters,
-#'              "Elev",
-#'              "Cluster_3")
 
 compare_zone <- function(data,
                          variable,
@@ -317,7 +306,6 @@ CalcLetras <- function(myMeans, pvalue, alpha = 0.05) {
     if (chequeo > n)
       break
     for (i in j:n) {
-      # browser()
       stest <- Qm[q[i], q[j]] > alpha
       if (stest) {
         if (lastC(M[i]) != letras[k]) {
@@ -330,7 +318,7 @@ CalcLetras <- function(myMeans, pvalue, alpha = 0.05) {
         cambio1 <- 0
         ja <- j
         for (jj in cambio:n)
-          M[jj] <- paste(M[jj], "", sep = "") # El espacio
+          M[jj] <- paste(M[jj], "", sep = "")
         M[cambio] <- paste(M[cambio], letras[k], sep = "")
         for (v in ja:cambio) {
           if (Qm[q[v], q[cambio]] <= alpha) {
@@ -346,15 +334,14 @@ CalcLetras <- function(myMeans, pvalue, alpha = 0.05) {
     if (cambio1 == 0)
       j <- j + 1
   }
-  #-----------
-  # browser()
+
   w <- data.frame(w, stat = M)
   if (k > 81
   )
     cat(
       "\n",
       k,
-      "groups are estimated.The number of groups exceeded the maximum of 81 labels. change to group=FALSE.\n"
+      "groups are estimated.The number of groups exceeded the maximum of 81 labels. Change to group=FALSE.\n"
     )
   invisible(w)
 }
