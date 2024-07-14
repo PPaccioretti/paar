@@ -5,14 +5,16 @@ Version: 0.0.0.9003
 Authors@R:
     c(
     person("Pablo", "Paccioretti", email = "pablopaccioretti@agro.unc.edu.ar", 
-    role = c("aut", "cre")),
+    role = c("aut", "cre", "cph")),
         person("Mariano", "Córdoba", email = "marianoacba@agro.unc.edu.ar", 
     role = c("aut")),
         person("Franca", "Giannini Kurina", email = "fgkurina@agro.unc.edu.ar", 
     role = c("aut"))
     )
-Description: Functions useful for precision agriculture spatial data 
-    depuration and management zone delineation. 
+Description: Precision agriculture spatial data 
+    depuration and homogeneous zones (management zone) delineation. 
+    The package includes functions for data cleaning, 
+    management zone delineation, and zone comparisson.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -37,3 +39,4 @@ Suggests:
     ggplot2
 URL: https://ppaccioretti.github.io/paar/, https://github.com/PPaccioretti/paar
 VignetteBuilder: knitr
+BugReports: https://github.com/PPaccioretti/paar/issues
