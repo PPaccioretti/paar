@@ -1,3 +1,5 @@
+# paar 1.0.0
+
 # paar 0.0.0.9003 (development version)
 
 * Now `depurate` function allows to use MULTIPOLYGON objects.

@@ -1,7 +1,7 @@
 Package: paar
 Type: Package
 Title: Precision Agriculture Data Analysis in R
-Version: 0.0.0.9003
+Version: 1.0.0
 Authors@R:
     c(
     person("Pablo", "Paccioretti", email = "pablopaccioretti@agro.unc.edu.ar", 
