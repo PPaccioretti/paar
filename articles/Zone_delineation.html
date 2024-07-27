@@ -92,7 +92,7 @@ of clusters. - <code>cluster</code>: the cluster number assigned to each
 observation.</p>
 <p>For this example we will use the <code>wheat</code> dataset that
 comes with the <code>paar</code> package. The <code>data.frame</code>
-has apparent electrical conductivity (ECa) meassured at two depths,
+has apparent electrical conductivity (ECa) measured at two depths,
 elevation data, soil depth, and wheat gran yield. All variables have
 been interpolated to an unique grid and then merged in a single
 <code>data.frame</code>.</p>
@@ -108,7 +108,7 @@ been interpolated to an unique grid and then merged in a single
 <p>The function <code>kmspc</code> requires the <code>sf</code> object
 with the data to be clustered, and the number of clusters (zones) to be
 delineated. For the sPC process, is necessary to specify the distance in
-wshich observations will be considered neighbors. The <code>ldist</code>
+which observations will be considered neighbors. The <code>ldist</code>
 and <code>udist</code> arguments specify the lower and upper distance
 thresholds, respectively. The <code>explainedVariance</code> argument
 specifies the minimum value of explained variance that the Principal
@@ -131,7 +131,7 @@ function returns a <code>data.frame</code> with indices
 <code>Entropy of Partition</code>, and <code>Summary Index</code>). The
 <code>Summary Index</code> is a combination of the indices to obtain a
 measure of the information reported by each index. In this example, the
-optimuin number of cluster is 2. For each index, lower the value better
+optimum number of cluster is 2. For each index, lower the value better
 the clustering. More information can be found in <span class="citation">Paccioretti, Córdoba, and Balzarini (2020)</span>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">kmspc_results</span><span class="op">$</span><span class="va">indices</span></span>
