@@ -1,4 +1,6 @@
-# paar 1.0.1 (development version)
+# (development version)
+
+# paar 1.0.1
 
 * Addresses CRAN comments.
 
