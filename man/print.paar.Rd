@@ -15,7 +15,7 @@ elements to print.}
 \item{...}{further arguments passed to or from other methods.}
 }
 \value{
-invisivle object x
+invisible object x
 }
 \description{
 Print paar objects

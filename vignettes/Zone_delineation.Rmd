@@ -36,7 +36,7 @@ of clusters.
 - `cluster`: the cluster number assigned to each observation.
 
 For this example we will use the `wheat` dataset that comes with the `paar` package.
-The `data.frame` has apparent electrical conductivity (ECa) meassured at 
+The `data.frame` has apparent electrical conductivity (ECa) measured at 
 two depths, elevation data, soil depth, and wheat gran yield. All variables 
 have been interpolated to an unique grid and then merged in a single `data.frame`.
 
@@ -55,7 +55,7 @@ plot(wheat_sf)
 
 The function `kmspc` requires the `sf` object with the data to be clustered, and
 the number of clusters (zones) to be delineated.
-For the sPC process, is necessary to specify the distance in wshich observations 
+For the sPC process, is necessary to specify the distance in which observations 
 will be considered neighbors. The `ldist` and `udist` arguments specify the
 lower and upper distance thresholds, respectively. The `explainedVariance`
 argument specifies the minimum value of explained variance that the Principal 
@@ -79,7 +79,7 @@ To help the user to chose the optimal number of clusters, the function returns
 a `data.frame` with indices (`Xie Beni`, `Partition Coefficient`, 
 `Entropy of Partition`, and `Summary Index`).
 The `Summary Index` is a combination of the indices to obtain a measure of the
-information reported by each index. In this example, the optimuin number of
+information reported by each index. In this example, the optimum number of
 cluster is 2. For each index, lower the value better the
 clustering. More information can be found in @Paccioretti2020.
 

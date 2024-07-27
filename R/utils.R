@@ -58,7 +58,7 @@ print.summary.paar <- function(x, digits, ...) {
 #' @inheritParams base::print
 #' @param n an integer vector specifying maximum number of rows or
 #'   elements to print.
-#' @return invisivle object x
+#' @return invisible object x
 #' @export
 print.paar <- function(x, n = 3, ...) {
   p_removed <- sum(!is.na(x$condition))/length(x$condition)*100

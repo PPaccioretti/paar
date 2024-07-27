@@ -123,7 +123,7 @@ barley_clean_paar
 ```
 
 The `summary` function can be used to get a summary of the percentage of 
-considered ouliers and the number of observations removed. The `summary` 
+considered outlier and the number of observations removed. The `summary` 
 function returns a `data.frame` object.
 
 ```{r}
