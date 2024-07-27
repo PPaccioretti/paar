@@ -600,9 +600,9 @@ summary.multispati <- function(object, ...) {
   if (!inherits(object, "multispati"))
     stop("to be used with 'multispati' object")
 
-  cat("\nMultivariate Spatial Analysis\n")
-  cat("Call: ")
-  print(object$call)
+  # cat("\nMultivariate Spatial Analysis\n")
+  # cat("Call: ")
+  # print(object$call)
 
   appel <- as.list(object$call)
   dudi <- eval.parent(appel$dudi)
@@ -654,8 +654,8 @@ summary.multispati <- function(object, ...) {
                     var = varspa,
                     moran = moran / varspa)
 
-  cat("\nMultispati eigenvalues decomposition:\n")
-  print(res[agarder, ])
+  # cat("\nMultispati eigenvalues decomposition:\n")
+  res[agarder, ]
   return(invisible(res))
 }
 
@@ -663,36 +663,36 @@ summary.multispati <- function(object, ...) {
 #' @noRd
 print.multispati <- function(x, ...)
 {
-  cat("Multispati object \n")
-  cat("class: ")
-  cat(class(x))
-  cat("\n$call: ")
-  print(x$call)
-  cat("\n$nfposi:", x$nfposi, "axis-components saved")
-  cat("\n$nfnega:", x$nfnega, "axis-components saved")
-  #cat("\n$rank: ")
-  #cat(x$rank)
-  cat("\nPositive eigenvalues: ")
+  # cat("Multispati object \n")
+  # cat("class: ")
+  # cat(class(x))
+  # cat("\n$call: ")
+  # print(x$call)
+  # cat("\n$nfposi:", x$nfposi, "axis-components saved")
+  # cat("\n$nfnega:", x$nfnega, "axis-components saved")
+  # #cat("\n$rank: ")
+  # #cat(x$rank)
+  # cat("\nPositive eigenvalues: ")
   l0 <- sum(x$eig >= 0)
-  cat(signif(x$eig, 4)[1:(min(5, l0))])
-  if (l0 > 5)
-    cat(" ...\n")
-  else
-    cat("\n")
-  cat("Negative eigenvalues: ")
+  # cat(signif(x$eig, 4)[1:(min(5, l0))])
+  # if (l0 > 5)
+  #   cat(" ...\n")
+  # else
+  #   cat("\n")
+  # cat("Negative eigenvalues: ")
   l0 <- sum(x$eig <= 0)
-  cat(sort(signif(x$eig, 4))[1:(min(5, l0))])
-  if (l0 > 5)
-    cat(" ...\n")
-  else
-    cat("\n")
-  cat('\n')
+  # cat(sort(signif(x$eig, 4))[1:(min(5, l0))])
+  # if (l0 > 5)
+  #   cat(" ...\n")
+  # else
+  #   cat("\n")
+  # cat('\n')
   sumry <- array("", c(1, 4), list(1, c("vector", "length",
                                         "mode", "content")))
   sumry[1,] <- c('$eig', length(x$eig), mode(x$eig), 'eigen values')
 
-  print(sumry, quote = FALSE)
-  cat("\n")
+  # print(sumry, quote = FALSE)
+  # cat("\n")
   sumry <-
     array("", c(4, 4), list(1:4, c("data.frame", "nrow", "ncol", "content")))
   sumry[1,] <-
@@ -706,13 +706,13 @@ print.multispati <- function(x, ...)
       ncol(x$as),
       'inertia axes onto multispati axes')
 
-
-  print(sumry, quote = FALSE)
-  cat("other elements: ")
-  if (length(names(x)) > 8)
-    cat(names(x)[9:(length(names(x)))], "\n")
-  else
-    cat("NULL\n")
+  sumry
+  # print(sumry, quote = FALSE)
+  # cat("other elements: ")
+  # if (length(names(x)) > 8)
+  #   cat(names(x)[9:(length(names(x)))], "\n")
+  # else
+  #   cat("NULL\n")
 }
 
 

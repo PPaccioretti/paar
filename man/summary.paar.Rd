@@ -12,7 +12,7 @@
 \item{...}{additional arguments affecting the summary produced.}
 }
 \value{
-A data.frame with the following columns:
+An object of class summary.paar (data.frame) with the following columns:
 \itemize{
  \item \code{condition} a character vector with the final condition.
  \item \code{n} a numeric vector with the number of rows for each condition.

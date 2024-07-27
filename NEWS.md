@@ -1,6 +1,12 @@
+# paar 1.0.1 (development version)
+
+* Addresses CRAN comments.
+
 # paar 1.0.0
 
-# paar 0.0.0.9003 (development version)
+* Prepare for CRAN submission.
+
+# paar 0.0.0.9003 
 
 * Now `depurate` function allows to use MULTIPOLYGON objects.
 * Build vignette for `kmspc` function. 

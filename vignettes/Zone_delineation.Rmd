@@ -9,7 +9,6 @@ bibliography: references.bib
 ---
 
 ```{r, include = FALSE}
-has_ggplot <- requireNamespace("ggplot2")
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -113,11 +112,11 @@ plot(wheat_clustered[, "Cluster_2"])
 
 
 Also, ggplot can be used to plot the clusters.
-```{r eval = !has_ggplot, echo = FALSE, comment = NA}
+```{r eval = !requireNamespace("ggplot2"), echo = FALSE, comment = NA}
 message("No package ggplot2 available. Code chunks using that package will not be evaluated.")
 ```
 
-```{r, eval = has_ggplot}
+```{r, eval = requireNamespace("ggplot2")}
 ggplot(wheat_clustered) +
   geom_sf(aes(color = Cluster_2)) +
   theme_minimal()

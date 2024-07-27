@@ -14,6 +14,9 @@
 
 \item{...}{further arguments passed to or from other methods.}
 }
+\value{
+A data.frame with the summarized condition of the object.
+}
 \description{
 Print summarized paar object
 }

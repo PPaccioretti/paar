@@ -338,7 +338,7 @@ CalcLetras <- function(myMeans, pvalue, alpha = 0.05) {
   w <- data.frame(w, stat = M)
   if (k > 81
   )
-    cat(
+    warning(
       "\n",
       k,
       "groups are estimated.The number of groups exceeded the maximum of 81 labels. Change to group=FALSE.\n"

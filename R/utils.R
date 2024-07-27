@@ -1,13 +1,12 @@
 
 #' Summarizing paar objects
 #' @inheritParams base::summary
-#' @returns A data.frame with the following columns:
+#' @returns An object of class summary.paar (data.frame) with the following columns:
 #' \itemize{
 #'  \item \code{condition} a character vector with the final condition.
 #'  \item \code{n} a numeric vector with the number of rows for each condition.
 #'  \item \code{percentage} a numeric vector with the percentage of rows for each condition.
 #'  }
-#'
 #' @export
 summary.paar <- function(object, ...) {
   condition <- object$condition
@@ -39,6 +38,7 @@ summary.paar <- function(object, ...) {
 
 #' Print summarized paar object
 #' @inheritParams base::print
+#' @returns A data.frame with the summarized condition of the object.
 #' @export
 
 print.summary.paar <- function(x, digits, ...) {
@@ -58,6 +58,7 @@ print.summary.paar <- function(x, digits, ...) {
 #' @inheritParams base::print
 #' @param n an integer vector specifying maximum number of rows or
 #'   elements to print.
+#' @return invisivle object x
 #' @export
 print.paar <- function(x, n = 3, ...) {
   p_removed <- sum(!is.na(x$condition))/length(x$condition)*100
