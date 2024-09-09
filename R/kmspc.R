@@ -547,17 +547,17 @@ multispati <-
 
     if (nfposi > sum(res$eig > 0)) {
       nfposi <- sum(res$eig > 0)
-      warning(paste("There are only", sum(res$eig > 0), "positive factors."))
+      # warning(paste("There are only", sum(res$eig > 0), "positive factors."))
     }
     if (nfnega > sum(res$eig < 0)) {
       nfnega <- sum(res$eig < 0)
-      warning(paste("There are only", sum(res$eig < 0), "negative factors."))
+      # warning(paste("There are only", sum(res$eig < 0), "negative factors."))
     }
 
     res$nfposi <- nfposi
     res$nfnega <- nfnega
     agarder <-
-      c(1:nfposi, if (nfnega > 0)
+      c(seq_len(nfposi), if (nfnega > 0)
         (ndim - nfnega + 1):ndim
         else
           NULL)
@@ -644,7 +644,7 @@ summary.multispati <- function(object, ...) {
   ndim <- dudi$rank
   nf <- nfposi + nfnega
   agarder <-
-    c(1:nfposi, if (nfnega > 0)
+    c(seq_len(nfposi), if (nfnega > 0)
       (ndim - nfnega + 1):ndim
       else
         NULL)
