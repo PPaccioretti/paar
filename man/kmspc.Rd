@@ -61,6 +61,14 @@ sPCA and PCA call?}
 \value{
 a list with classification results and indices to select best number of
 clusters.
+ \itemize{
+ \item \code{summaryResults} a data.frame with the number of clusters, iterations
+ and within cluster sum of squares.
+ \item \code{indices} a data.frame with indices to help to chose the optimal number
+ of clusters.
+ \item \code{cluster} the cluster number assigned to each observation.
+ \item \code{pca_results} a list with the PCA results (if \code{all_results = TRUE}).
+ }
 }
 \description{
 MULTISPATI-PCA clustering
