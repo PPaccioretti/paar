@@ -123,7 +123,7 @@ varKrigDescr <-
     }
     if (missing(grid_dim)) grid_dim <- NULL
     Krig <-
-      lapply(dataToCompare, function() {
+      lapply(dataToCompare, function(columna) {
         if (columna == "geometry") {
           return(NULL)
         }
@@ -165,8 +165,8 @@ varKrigDescr <-
           if (!is_newData) {
             kriging_cv <-
               gstat::krige.cv(
-                formula = formulaKr,
-                locations = sf::st_centroid(datos_predsf),
+                formulaKr,
+                sf::st_centroid(datos_predsf),
                 nfold = 10,
                 nmin = 7,
                 nmax = 25,

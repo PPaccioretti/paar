@@ -1,5 +1,7 @@
 # (development version)
 
+* Added `plot` function (#13)
+
 # paar 1.0.1
 
 * Addresses CRAN comments.

@@ -110,7 +110,9 @@ cbind.paar = function(..., deparse.level = 1) {
     if (names(dots)[classes] == "") {
       names(dots)[classes] <- 'condition'
     }
-    do.call(base::cbind, dots)
+    results <- do.call(base::cbind, dots)
+    class(results) <- c('paarCondition', class(results))
+    results
   } else {
     stop('No paar object found.')
   }
