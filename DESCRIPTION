@@ -41,5 +41,5 @@ Suggests:
     rmarkdown,
     ggplot2
 URL: https://ppaccioretti.github.io/paar/, https://github.com/PPaccioretti/paar
-VignetteBuilder: knitr
+VignetteBuilder: knitr, rmarkdown
 BugReports: https://github.com/PPaccioretti/paar/issues
