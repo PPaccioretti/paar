@@ -234,6 +234,13 @@ remove_border <- function(x,
       call. = FALSE)
     }
 
+    # Check bbox overlap between x and poly_border
+    overlap_result <- check_bbox_overlap(x, poly_border)
+    if (!is.null(overlap_result$error)) {
+      warning(overlap_result$error)
+    } else if (!overlap_result$overlaps) {
+      warning('Bounding boxes of x and poly_border do not overlap.')
+    }
 
     mapa_hull <- poly_border
 
@@ -300,6 +307,43 @@ remove_border <- function(x,
        'condition' = condition)
 
 }
+
+
+
+#' Check if bounding boxes of two sf objects overlap
+#'
+#' @description Function to check if two sf objects' bounding boxes overlap
+#' @return List with overlap status and error message (if any)
+#' @noRd
+check_bbox_overlap <- function(sf_obj1, sf_obj2) {
+  result <- list(
+    overlaps = NA,
+    error = NULL
+  )
+  bbox1 <- sf::st_bbox(sf_obj1)
+  bbox2 <- sf::st_bbox(sf_obj2)
+  crs1 <- sf::st_crs(sf_obj1)
+  crs2 <- sf::st_crs(sf_obj2)
+
+  if (is.na(crs1) || is.na(crs2)) {
+    result$error <- "One or both objects have no CRS defined"
+    return(result)
+  }
+
+  poly1 <- sf::st_as_sfc(bbox1)
+  poly2 <- sf::st_as_sfc(bbox2)
+
+  if (crs1 != crs2) {
+    poly2 <- sf::st_transform(poly2, crs1)
+  }
+
+  overlaps <- sf::st_intersects(poly1, poly2, sparse = FALSE)
+  result$overlaps <- any(overlaps)
+
+  return(result)
+}
+
+
 
 #' @title Removes outliers
 #'
