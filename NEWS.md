@@ -1,5 +1,9 @@
 # (development version)
 
+* Now Summary index is calculated correctly. 
+* PCA results can be obtained within kmspc function
+* Factor recoding.
+
 # paar 1.0.1
 
 * Addresses CRAN comments.

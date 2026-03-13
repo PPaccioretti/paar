@@ -70,13 +70,10 @@ library(sf)
 data(wheat, package = 'paar')
 
 # Transform the data.frame into a sf object
-wheat_sf <- st_as_sf(wheat,
-                     coords = c('x', 'y'),
-                     crs = 32720)
+wheat_sf <- st_as_sf(wheat, coords = c('x', 'y'), crs = 32720)
 
 # Run the kmspc function
-kmspc_results <- kmspc(wheat_sf,
-                       number_cluster = 2:4)
+kmspc_results <- kmspc(wheat_sf, number_cluster = 2:4)
 
 # Print the summaryResults
 kmspc_results$summaryResults

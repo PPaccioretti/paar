@@ -89,12 +89,10 @@ Possible values for \code{toremove} are one or more elements of:
 library(sf)
 data(barley, package = 'paar')
 #Convert to an sf object
-barley <- st_as_sf(barley,
-                   coords = c("X", "Y"),
-                   crs = 32720)
+barley <- st_as_sf(barley, coords = c("X", "Y"), crs = 32720)
+
 depurated <-
-  depurate(barley,
-           "Yield")
+  depurate(barley, "Yield")
 
 # Summary of depurated data
 summary(depurated)
