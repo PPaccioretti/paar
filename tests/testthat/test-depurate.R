@@ -11,6 +11,9 @@ mapa <- data.frame(crds, r)
 
 mapa <- sf::st_as_sf(mapa, coords = c('x', 'y'), crs = 32721)
 
+test_that('concaveman dependency is isntalled', {
+  expect_true(require('concaveman'))
+})
 
 test_that("edges removes fine", {
   dep <- depurate(x = mapa,
