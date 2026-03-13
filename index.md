@@ -6,18 +6,18 @@ agriculture spatial data depuration.
 ## Installation
 
 You can install the released version of paar from
-[CRAN](https://CRAN.R-project.org) with (not-yet):
+[CRAN](https://CRAN.R-project.org) with:
 
 ``` r
-# install.packages("paar")
+install.packages("paar")
 ```
 
 You can install the development version from
 [GitHub](https://github.com/PPaccioretti/paar) with:
 
 ``` r
-# install.packages("devtools")
-devtools::install_github("PPaccioretti/paar")
+# install.packages("pak")
+pak::pkg_install("PPaccioretti/paar")
 ```
 
 ## Example
@@ -29,7 +29,6 @@ data.
 ``` r
 library(paar)
 library(sf)
-#> Warning: package 'sf' was built under R version 4.3.3
 data("barley", package = 'paar')
 ```
 

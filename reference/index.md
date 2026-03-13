@@ -18,12 +18,6 @@
   : Print paar objects
 - [`print(`*`<summary.paar>`*`)`](https://ppaccioretti.github.io/paar/reference/print.summary.paar.md)
   : Print summarized paar object
-- [`remove_border()`](https://ppaccioretti.github.io/paar/reference/remove_border.md)
-  : Remove borders
-- [`remove_inlier()`](https://ppaccioretti.github.io/paar/reference/remove_inlier.md)
-  : Remove spatial outliers
-- [`remove_outlier()`](https://ppaccioretti.github.io/paar/reference/remove_outlier.md)
-  : Removes outliers
 - [`spatial_t_test()`](https://ppaccioretti.github.io/paar/reference/spatial_t_test.md)
   : Modified t test
 - [`summary(`*`<paar>`*`)`](https://ppaccioretti.github.io/paar/reference/summary.paar.md)
