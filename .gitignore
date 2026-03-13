@@ -7,3 +7,5 @@ extra/*
 docs
 inst/doc
 revdep
+
+/.quarto/
