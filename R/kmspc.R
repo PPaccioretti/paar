@@ -27,27 +27,30 @@
 #' @export
 #' @example inst/examples/kmspc.R
 #'
-kmspc <- function(data,
-                  variables,
-                  number_cluster = 3:5,
-                  explainedVariance = 70,
-                  ldist = 0,
-                  udist = 40,
-                  center = TRUE,
-                  fuzzyness = 1.2,
-                  distance = "euclidean",
-                  zero.policy = FALSE,
-                  only_spca_results = TRUE,
-                  all_results = FALSE) {
-
+kmspc <- function(
+  data,
+  variables,
+  number_cluster = 3:5,
+  explainedVariance = 70,
+  ldist = 0,
+  udist = 40,
+  center = TRUE,
+  fuzzyness = 1.2,
+  distance = "euclidean",
+  zero.policy = FALSE,
+  only_spca_results = TRUE,
+  all_results = FALSE
+) {
   if (missing(variables)) {
     myNumVars <-
       unlist(lapply(sf::st_drop_geometry(data), is.numeric))
     if (sum(myNumVars) == 0) {
       stop('Non numeric variables were found in data')
     }
-    warning("All numeric Variables will be used to make clusters",
-            call. = FALSE)
+    warning(
+      "All numeric Variables will be used to make clusters",
+      call. = FALSE
+    )
     variables <- names(sf::st_drop_geometry(data))[myNumVars]
   }
 
@@ -56,9 +59,11 @@ kmspc <- function(data,
   }
 
   if (length(variables) <= 1) {
-    stop('There should be more than 1 numeric variables.',
-    '\nConsider using paar::fuzzy_k_means if you have only one variable',
-    ' for clustering process.')
+    stop(
+      'There should be more than 1 numeric variables.',
+      '\nConsider using paar::fuzzy_k_means if you have only one variable',
+      ' for clustering process.'
+    )
   }
 
   if (between(explainedVariance, 0, 1)) {
@@ -75,14 +80,13 @@ kmspc <- function(data,
     any(is.na(x))
   })
 
-
   data <- stats::na.omit(data)
   data_clust <- data
 
   lw <- spatial_weights(data, ldist, udist, zero.policy = zero.policy)
   pca <-
     dudy_pca(
-    # ade4::dudi.pca(
+      # ade4::dudi.pca(
       sf::st_drop_geometry(data),
       center = center,
       scale = TRUE,
@@ -92,12 +96,12 @@ kmspc <- function(data,
   suppressWarnings(
     ms <- multispati(
       # adespatial::multispati(
-        pca,
-        lw,
-        scannf = FALSE,
-        nfnega = length(variables),
-        nfposi = length(variables)
-      )
+      pca,
+      lw,
+      scannf = FALSE,
+      nfnega = length(variables),
+      nfposi = length(variables)
+    )
   )
 
   # PCA results -----
@@ -108,7 +112,6 @@ kmspc <- function(data,
   }
 
   if (!only_spca_results) {
-
     autov_pca <- pca$eig
     propvar_pca <- autov_pca / sum(autov_pca)
     propvaracum_pca <- cumsum(propvar_pca)
@@ -119,17 +122,23 @@ kmspc <- function(data,
 
     nfila_pca <- length(variables)
     eje_pca <- seq_len(nfila_pca)
-    resultado_pca = data.frame(eje_pca, autov_pca, propvar_pca, propvaracum_pca, my_pca)
+    resultado_pca = data.frame(
+      eje_pca,
+      autov_pca,
+      propvar_pca,
+      propvaracum_pca,
+      my_pca
+    )
     resultado_pca$eje_pca <- as.factor(resultado_pca$eje_pca)
-    names(resultado_pca) = c("Axis",
-                             "Eigenvalue",
-                             "Prop",
-                             "Acum. Prop.",
-                             "Moran Index")
-    pca_results <- c(list(pca_results = resultado_pca),
-                     pca_results)
+    names(resultado_pca) = c(
+      "Axis",
+      "Eigenvalue",
+      "Prop",
+      "Acum. Prop.",
+      "Moran Index"
+    )
+    pca_results <- c(list(pca_results = resultado_pca), pca_results)
   }
-
 
   # sPCA results ----
   invisible(utils::capture.output(resms <- summary(ms)))
@@ -140,47 +149,61 @@ kmspc <- function(data,
 
   eje_ms <- seq_len(nfila_ms)
   resultado_ms <-
-    data.frame(eje_ms, resms$eig, resms$var, propvar_ms, propvaracum_ms, resms$moran)
+    data.frame(
+      eje_ms,
+      resms$eig,
+      resms$var,
+      propvar_ms,
+      propvaracum_ms,
+      resms$moran
+    )
   names(resultado_ms) <-
-    c("Axis",
+    c(
+      "Axis",
       "Eigenvalue",
       "Spatial Variance",
       "Prop",
       "Acum. Prop.",
-      "Moran Index")
+      "Moran Index"
+    )
 
   num_sPC <-
-    seq_len(Position(function(x) {
-      x > explainedVariance
-    }, unlist(propvaracum_ms)))
+    seq_len(Position(
+      function(x) {
+        x > explainedVariance
+      },
+      unlist(propvaracum_ms)
+    ))
 
-  spca_results <- list(spca_summary_results = resultado_ms,
-                       eigenvectors_used = ms$c1[, num_sPC, drop = FALSE])
+  spca_results <- list(
+    spca_summary_results = resultado_ms,
+    eigenvectors_used = ms$c1[, num_sPC, drop = FALSE]
+  )
 
   if (all_results) {
-    spca_results <- append(spca_results,
-                           list(spca_results_all = ms))
+    spca_results <- append(spca_results, list(spca_results_all = ms))
 
-    pca_results <- append(pca_results,
-                          spca_results)
+    pca_results <- append(pca_results, spca_results)
   }
-
 
   data_clust <- ms$li[num_sPC]
 
   if (inherits(data_clust, "sf")) {
-    data_clust <-  sf::st_drop_geometry(data_clust)
+    data_clust <- sf::st_drop_geometry(data_clust)
   }
 
-  my_results <- make_clasification(data_clust,
-                                   number_cluster,
-                                   fuzzyness = fuzzyness,
-                                   distance = distance)
+  my_results <- make_clasification(
+    data_clust,
+    number_cluster,
+    fuzzyness = fuzzyness,
+    distance = distance
+  )
 
-
-  cluster_na <- data.frame(matrix(NA,
-                                 nrow = raw_nrow,
-                                 ncol = ncol(my_results$cluster)))
+  cluster_na <- data.frame(matrix(
+    NA,
+    nrow = raw_nrow,
+    ncol = ncol(my_results$cluster)
+  ))
   colnames(cluster_na) <- colnames(my_results$cluster)
   cluster_na[!myNArows, ] <- my_results$cluster
   # Return cluster as character
@@ -188,50 +211,43 @@ kmspc <- function(data,
   my_results$cluster <- cluster_na
   my_results$pca_results <- pca_results
   my_results
-
 }
-
-
-
-
 
 
 #' Auxiliary function for kmspc
 #' @noRd
 cmeans_vectorized <-
-  function(data,
-           nclusters,
-           ...,
-           index = c(
-             "xie.beni",
-             # "fukuyama.sugeno",
-             "partition.coefficient",
-             "partition.entropy"
-           )) {
-    lapply(nclusters, function(center, x, index, ...) {
-      myClusters <- e1071::cmeans(
-        x = data,
-        centers = center,
-        method = "cmeans",
-        iter.max = 100,
-        ...
-      )
+  function(
+    data,
+    nclusters,
+    ...,
+    index = c(
+      "xie.beni",
+      # "fukuyama.sugeno",
+      "partition.coefficient",
+      "partition.entropy"
+    )
+  ) {
+    lapply(
+      nclusters,
+      function(center, x, index, ...) {
+        myClusters <- e1071::cmeans(
+          x = data,
+          centers = center,
+          method = "cmeans",
+          iter.max = 100,
+          ...
+        )
 
-      myIndices <- fclustIndex(myClusters,
-                               x = data,
-                               index = index)
+        myIndices <- fclustIndex(myClusters, x = data, index = index)
 
-      list("cluster" = myClusters,
-           "indices" = myIndices)
-    },
-    x = data,
-    index = index,
-    ...)
-
-
+        list("cluster" = myClusters, "indices" = myIndices)
+      },
+      x = data,
+      index = index,
+      ...
+    )
   }
-
-
 
 
 #' Auxiliary function for kmspc
@@ -241,11 +257,11 @@ spatial_weights <- function(data, ldist, udist, zero.policy = FALSE) {
   spdep::set.ZeroPolicyOption(zero.policy)
 
   gri <-
-    spdep::dnearneigh(data,
-                      ldist,
-                      udist)
+    spdep::dnearneigh(data, ldist, udist)
   lw <- tryCatch(
-    {spdep::nb2listw(gri, style = "W")},
+    {
+      spdep::nb2listw(gri, style = "W")
+    },
     error = function(e) {
       if (agrepl("Empty neighbour sets found", e)) {
         stop("Empty neighbour sets found", call. = FALSE)
@@ -270,24 +286,25 @@ between <- function(x, min, max) {
 normalize <- function(x) {
   if (length(x) > 1) {
     return(x / max(x))
-  } else {x}
-
+  } else {
+    x
+  }
 }
-
-
 
 
 #' Auxiliary function for kmspc
 #' @noRd
 summarize_indices <- function(indices, number_cluster) {
-
   indices <- do.call("rbind", indices)
-
   IndN <- indices
+  if (any(colnames(indices) %in% "pc")) {
+    IndN[, 'pc'] <- 1 / IndN[, 'pc']
+  }
+
   if (nrow(indices) > 1) {
     IndN <- apply(indices, 2, normalize)
     IndN <- apply(IndN, 1, function(xx) {
-      sqrt(sum(xx ^ 2))
+      sqrt(sum(xx^2))
     })
   }
 
@@ -309,9 +326,11 @@ summarize_clusters_metrics <- function(clasifications, number_cluster) {
   res_iter <- lapply(clasifications, '[[', "iter")
   res_scdd <- lapply(clasifications, '[[', "withinerror")
 
-  data.frame("Clusters" = number_cluster,
-             "Iterations" = unlist(res_iter),
-             "SSDW" = unlist(res_scdd))
+  data.frame(
+    "Clusters" = number_cluster,
+    "Iterations" = unlist(res_iter),
+    "SSDW" = unlist(res_scdd)
+  )
 }
 
 
@@ -322,95 +341,84 @@ summarize_clusters <- function(clasifications, number_cluster) {
     lapply(clasifications, '[[', "cluster")
   res_clas <- data.frame(res_clas)
   names(res_clas) <-
-    paste("Cluster", "_",
-          number_cluster,
-          sep = "")
+    paste("Cluster", "_", number_cluster, sep = "")
   res_clas
 }
-
 
 
 #' Auxiliary function for kmspc
 #' @noRd
 #'
 make_clasification <- function(data, number_cluster, fuzzyness, distance) {
-  clasifications <- cmeans_vectorized(data,
-                                       number_cluster,
-                                       dist = distance,
-                                       m = fuzzyness)
+  clasifications <- cmeans_vectorized(
+    data,
+    number_cluster,
+    dist = distance,
+    m = fuzzyness
+  )
   indices <- lapply(clasifications, '[[', "indices")
   indices <- summarize_indices(indices, number_cluster)
 
-
   clasifications <- lapply(clasifications, '[[', "cluster")
-
-
-
 
   clasifResults <-
     summarize_clusters_metrics(clasifications, number_cluster)
   FinalCluster <-
     summarize_clusters(clasifications, number_cluster)
 
-  list("summaryResults" = clasifResults,
-       "indices" = indices,
-       "cluster" = FinalCluster)
+  list(
+    "summaryResults" = clasifResults,
+    "indices" = indices,
+    "cluster" = FinalCluster
+  )
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #' @noRd
-dudy_pca <- function(df,
-                     row.w = rep(1, nrow(df))/nrow(df),
-                     col.w = rep(1, ncol(df)),
-                     center = TRUE,
-                     scale = TRUE,
-                     scannf = TRUE,
-                     nf = 2)
-{
+dudy_pca <- function(
+  df,
+  row.w = rep(1, nrow(df)) / nrow(df),
+  col.w = rep(1, ncol(df)),
+  center = TRUE,
+  scale = TRUE,
+  scannf = TRUE,
+  nf = 2
+) {
   df <- as.data.frame(df)
   nc <- ncol(df)
-  if (any(is.na(df)))
+  if (any(is.na(df))) {
     stop("na entries in table")
-  f1 <- function(v) sum(v * row.w)/sum(row.w)
-  f2 <- function(v) sqrt(sum(v * v * row.w)/sum(row.w))
+  }
+  f1 <- function(v) sum(v * row.w) / sum(row.w)
+  f2 <- function(v) sqrt(sum(v * v * row.w) / sum(row.w))
   if (is.logical(center)) {
     if (center) {
       center <- apply(df, 2, f1)
       df <- sweep(df, 2, center)
+    } else {
+      center <- rep(0, nc)
     }
-    else center <- rep(0, nc)
-  }
-  else if (is.numeric(center) && (length(center) == nc))
+  } else if (is.numeric(center) && (length(center) == nc)) {
     df <- sweep(df, 2, center)
-  else stop("Non convenient selection for center")
+  } else {
+    stop("Non convenient selection for center")
+  }
   if (scale) {
     norm <- apply(df, 2, f2)
     norm[norm < 1e-08] <- 1
     df <- sweep(df, 2, norm, "/")
+  } else {
+    norm <- rep(1, nc)
   }
-  else norm <- rep(1, nc)
-  X <- as_dudi(df, col.w, row.w, scannf = scannf, nf = nf,
-               call = match.call(), type = "pca")
+  X <- as_dudi(
+    df,
+    col.w,
+    row.w,
+    scannf = scannf,
+    nf = nf,
+    call = match.call(),
+    type = "pca"
+  )
   X$cent <- center
   X$norm <- norm
   X
@@ -419,33 +427,41 @@ dudy_pca <- function(df,
 
 #' @noRd
 as_dudi <-
-  function(df,
-           col.w,
-           row.w,
-           scannf,
-           nf,
-           call,
-           type,
-           tol = 1e-07,
-           full = FALSE)
-  {
-    if (!is.data.frame(df))
+  function(
+    df,
+    col.w,
+    row.w,
+    scannf,
+    nf,
+    call,
+    type,
+    tol = 1e-07,
+    full = FALSE
+  ) {
+    if (!is.data.frame(df)) {
       stop("data.frame expected")
+    }
     lig <- nrow(df)
     col <- ncol(df)
-    if (length(col.w) != col)
+    if (length(col.w) != col) {
       stop("Non convenient col weights")
-    if (length(row.w) != lig)
+    }
+    if (length(row.w) != lig) {
       stop("Non convenient row weights")
-    if (any(col.w < 0))
+    }
+    if (any(col.w < 0)) {
       stop("col weight < 0")
-    if (any(row.w < 0))
+    }
+    if (any(row.w < 0)) {
       stop("row weight < 0")
-    if (full)
+    }
+    if (full) {
       scannf <- FALSE
+    }
     transpose <- FALSE
-    if (lig < col)
+    if (lig < col) {
       transpose <- TRUE
+    }
     res <- list(tab = df, cw = col.w, lw = row.w)
     df <- as.matrix(df)
     df.ori <- df
@@ -453,19 +469,21 @@ as_dudi <-
     df <- sweep(df, 2, sqrt(col.w), "*")
     if (!transpose) {
       df <- crossprod(df, df)
-    }
-    else {
+    } else {
       df <- tcrossprod(df, df)
     }
     eig1 <- eigen(df, symmetric = TRUE)
     eig <- eig1$values
     rank <- sum((eig / eig[1]) > tol)
-    if (nf <= 0)
+    if (nf <= 0) {
       nf <- 2
-    if (nf > rank)
+    }
+    if (nf > rank) {
       nf <- rank
-    if (full)
+    }
+    if (full) {
       nf <- rank
+    }
     res$eig <- eig[1:rank]
     res$rank <- rank
     res$nf <- nf
@@ -513,22 +531,22 @@ as_dudi <-
 
 #' @noRd
 multispati <-
-  function(dudi,
-           listw,
-           scannf = TRUE,
-           nfposi = 2,
-           nfnega = 0) {
-    if (!inherits(dudi, "dudi"))
+  function(dudi, listw, scannf = TRUE, nfposi = 2, nfnega = 0) {
+    if (!inherits(dudi, "dudi")) {
       stop("object of class 'dudi' expected")
-    if (!inherits(listw, "listw"))
+    }
+    if (!inherits(listw, "listw")) {
       stop("object of class 'listw' expected")
-    if (listw$style != "W")
+    }
+    if (listw$style != "W") {
       stop("object of class 'listw' with style 'W' expected")
+    }
     NEARZERO <- 1e-14
 
     dudi$cw <- dudi$cw
     fun <- function(x) {
-      spdep::lag.listw(listw, x, TRUE)}
+      spdep::lag.listw(listw, x, TRUE)
+    }
     tablag <- apply(dudi$tab, 2, fun)
     covar <- t(tablag) %*% as.matrix((dudi$tab * dudi$lw))
     covar <- (covar + t(covar)) / 2
@@ -540,10 +558,12 @@ multispati <-
     ndim <- length(res$eig)
     covar$vectors <- covar$vectors[, abs(covar$values) > NEARZERO]
 
-    if (nfposi <= 0)
+    if (nfposi <= 0) {
       nfposi <- 1
-    if (nfnega <= 0)
+    }
+    if (nfnega <= 0) {
       nfnega <- 0
+    }
 
     if (nfposi > sum(res$eig > 0)) {
       nfposi <- sum(res$eig > 0)
@@ -557,10 +577,14 @@ multispati <-
     res$nfposi <- nfposi
     res$nfnega <- nfnega
     agarder <-
-      c(seq_len(nfposi), if (nfnega > 0)
-        (ndim - nfnega + 1):ndim
-        else
-          NULL)
+      c(
+        seq_len(nfposi),
+        if (nfnega > 0) {
+          (ndim - nfnega + 1):ndim
+        } else {
+          NULL
+        }
+      )
     dudi$cw[which(dudi$cw == 0)] <- 1
     auxi <- data.frame(covar$vectors[, agarder] / sqrt(dudi$cw))
     names(auxi) <- paste("CS", agarder, sep = "")
@@ -575,7 +599,7 @@ multispati <-
     auxi1 <- as.matrix(tablag) %*% auxi
     auxi1 <- data.frame(auxi1)
     names(auxi1) <- names(res$c1)
-    row.names(auxi1) <-  row.names(dudi$tab)
+    row.names(auxi1) <- row.names(dudi$tab)
     res$ls <- auxi1
     auxi <- as.matrix(res$c1) * unlist(dudi$cw)
     auxi <- data.frame(t(as.matrix(dudi$c1)) %*% auxi)
@@ -591,14 +615,16 @@ multispati <-
 #' @noRd
 summary.multispati <- function(object, ...) {
   norm.w <- function(X, w) {
-    f2 <- function(v)
+    f2 <- function(v) {
       sum(v * v * w) / sum(w)
+    }
     norm <- apply(X, 2, f2)
     return(norm)
   }
 
-  if (!inherits(object, "multispati"))
+  if (!inherits(object, "multispati")) {
     stop("to be used with 'multispati' object")
+  }
 
   # cat("\nMultivariate Spatial Analysis\n")
   # cat("Call: ")
@@ -611,14 +637,10 @@ summary.multispati <- function(object, ...) {
   ## les scores de l'analyse de base
   nf <- dudi$nf
   eig <- dudi$eig[1:nf]
-  cum <- cumsum(dudi$eig) [1:nf]
+  cum <- cumsum(dudi$eig)[1:nf]
   ratio <- cum / sum(dudi$eig)
   w <-
-    apply(dudi$l1,
-          2,
-          spdep::lag.listw,
-          x = listw,
-          zero.policy = TRUE)
+    apply(dudi$l1, 2, spdep::lag.listw, x = listw, zero.policy = TRUE)
   moran <- apply(w * as.matrix(dudi$l1) * dudi$lw, 2, sum)
   res <- data.frame(
     var = eig,
@@ -644,15 +666,17 @@ summary.multispati <- function(object, ...) {
   ndim <- dudi$rank
   nf <- nfposi + nfnega
   agarder <-
-    c(seq_len(nfposi), if (nfnega > 0)
-      (ndim - nfnega + 1):ndim
-      else
-        NULL)
+    c(
+      seq_len(nfposi),
+      if (nfnega > 0) {
+        (ndim - nfnega + 1):ndim
+      } else {
+        NULL
+      }
+    )
   varspa <- norm.w(ms$li, dudi$lw)
   moran <- apply(as.matrix(ms$li) * as.matrix(ms$ls) * dudi$lw, 2, sum)
-  res <- data.frame(eig = eig,
-                    var = varspa,
-                    moran = moran / varspa)
+  res <- data.frame(eig = eig, var = varspa, moran = moran / varspa)
 
   # cat("\nMultispati eigenvalues decomposition:\n")
   res[agarder, ]
@@ -661,8 +685,7 @@ summary.multispati <- function(object, ...) {
 
 
 #' @noRd
-print.multispati <- function(x, ...)
-{
+print.multispati <- function(x, ...) {
   # cat("Multispati object \n")
   # cat("class: ")
   # cat(class(x))
@@ -687,24 +710,20 @@ print.multispati <- function(x, ...)
   # else
   #   cat("\n")
   # cat('\n')
-  sumry <- array("", c(1, 4), list(1, c("vector", "length",
-                                        "mode", "content")))
-  sumry[1,] <- c('$eig', length(x$eig), mode(x$eig), 'eigen values')
+  sumry <- array("", c(1, 4), list(1, c("vector", "length", "mode", "content")))
+  sumry[1, ] <- c('$eig', length(x$eig), mode(x$eig), 'eigen values')
 
   # print(sumry, quote = FALSE)
   # cat("\n")
   sumry <-
     array("", c(4, 4), list(1:4, c("data.frame", "nrow", "ncol", "content")))
-  sumry[1,] <-
+  sumry[1, ] <-
     c("$c1", nrow(x$c1), ncol(x$c1), "column normed scores")
-  sumry[2,] <- c("$li", nrow(x$li), ncol(x$li), "row coordinates")
-  sumry[3,] <-
+  sumry[2, ] <- c("$li", nrow(x$li), ncol(x$li), "row coordinates")
+  sumry[3, ] <-
     c("$ls", nrow(x$ls), ncol(x$ls), 'lag vector coordinates')
-  sumry[4,] <-
-    c("$as",
-      nrow(x$as),
-      ncol(x$as),
-      'inertia axes onto multispati axes')
+  sumry[4, ] <-
+    c("$as", nrow(x$as), ncol(x$as), 'inertia axes onto multispati axes')
 
   sumry
   # print(sumry, quote = FALSE)
@@ -719,8 +738,7 @@ print.multispati <- function(x, ...)
 ## This function is from e1071 package fix so can be run in > R-4.2.0
 
 #' @noRd
-fclustIndex <- function(y, x, index = "all")
-{
+fclustIndex <- function(y, x, index = "all") {
   clres <- y
   gath.geva <- function(clres, x) {
     xrows <- dim(clres$me)[1]
@@ -737,23 +755,26 @@ fclustIndex <- function(y, x, index = "all")
       paronomastis2 <- as.double(0)
       for (j in 1:xrows) {
         paronomastis <- paronomastis + clres$me[j, i]
-        diff <- x[j,] - clres$ce[i,]
-        scatternew[, , i] <- clres$me[j, i] * (t(t(diff)) %*%
-                                                 t(diff))
-        scatter[, , i] <- scatter[, , i] + scatternew[,
-                                                      , i]
+        diff <- x[j, ] - clres$ce[i, ]
+        scatternew[,, i] <- clres$me[j, i] *
+          (t(t(diff)) %*%
+            t(diff))
+        scatter[,, i] <- scatter[,, i] +
+          scatternew[,,
+            i
+          ]
       }
-      scatter[, , i] <- scatter[, , i] / paronomastis
+      scatter[,, i] <- scatter[,, i] / paronomastis
       for (j in 1:xrows) {
-        diff <- x[j,] - clres$ce[i,]
-        control <- (t(diff) %*% solve(scatter[, , i])) %*%
+        diff <- x[j, ] - clres$ce[i, ]
+        control <- (t(diff) %*% solve(scatter[,, i])) %*%
           t(t(diff))
-        if (control < 1)
-          paronomastis2 <- paronomastis2 + clres$me[j,
-                                                    i]
+        if (control < 1) {
+          paronomastis2 <- paronomastis2 + clres$me[j, i]
+        }
       }
-      fhv <- fhv + sqrt(det(scatter[, , i]))
-      apd <- apd + paronomastis2 / sqrt(det(scatter[, , i]))
+      fhv <- fhv + sqrt(det(scatter[,, i]))
+      apd <- apd + paronomastis2 / sqrt(det(scatter[,, i]))
       pd <- pd + paronomastis2
     }
     pd <- pd / fhv
@@ -773,12 +794,14 @@ fclustIndex <- function(y, x, index = "all")
     ncenters <- dim(clres$centers)[1]
     for (i in 1:(ncenters - 1)) {
       for (j in (i + 1):ncenters) {
-        diff <- clres$ce[i,] - clres$ce[j,]
+        diff <- clres$ce[i, ] - clres$ce[j, ]
         diffdist <- t(diff) %*% t(t(diff))
-        if (minimum == -1)
+        if (minimum == -1) {
           minimum <- diffdist
-        if (diffdist < minimum)
+        }
+        if (diffdist < minimum) {
           minimum <- diffdist
+        }
       }
     }
     xiebeni <- error / (xrows * minimum)
@@ -793,10 +816,9 @@ fclustIndex <- function(y, x, index = "all")
     for (i in 1:ncenters) {
       paronomastis3 <- as.double(0)
       for (j in 1:xrows) {
-        paronomastis3 <- paronomastis3 + (clres$me[j,
-                                                   i] ^ 2)
+        paronomastis3 <- paronomastis3 + (clres$me[j, i]^2)
       }
-      diff <- clres$ce[i,] - meancenters
+      diff <- clres$ce[i, ] - meancenters
       diffdist <- t(diff) %*% t(t(diff))
       k2 <- k2 + paronomastis3 * diffdist
     }
@@ -805,7 +827,7 @@ fclustIndex <- function(y, x, index = "all")
   }
   partition.coefficient <- function(clres) {
     xrows <- dim(clres$me)[1]
-    partitioncoefficient <- sum(apply(clres$me ^ 2, 1, sum)) / xrows
+    partitioncoefficient <- sum(apply(clres$me^2, 1, sum)) / xrows
     return(partitioncoefficient)
   }
   partition.entropy <- function(clres) {
@@ -814,9 +836,10 @@ fclustIndex <- function(y, x, index = "all")
     partitionentropy <- 0
     for (i in 1:xrows) {
       for (k in 1:ncenters) {
-        if (clres$me[i, k] != 0)
-          partitionentropy <- partitionentropy + (clres$me[i,
-                                                           k] * log(clres$me[i, k]))
+        if (clres$me[i, k] != 0) {
+          partitionentropy <- partitionentropy +
+            (clres$me[i, k] * log(clres$me[i, k]))
+        }
       }
     }
     partitionentropy <- partitionentropy / ((-1) * xrows)
@@ -829,8 +852,7 @@ fclustIndex <- function(y, x, index = "all")
     maxcluster <- double(ncenters)
     minimum <- -1
     for (i in 1:ncenters) {
-      maxcluster[i] <- max(stats::dist(matrix(x[clres$cl == i],
-                                       ncol = xcols)))
+      maxcluster[i] <- max(stats::dist(matrix(x[clres$cl == i], ncol = xcols)))
     }
     maxdia <- maxcluster[rev(order(maxcluster))[1]]
     for (i in 1:(ncenters - 1)) {
@@ -839,13 +861,15 @@ fclustIndex <- function(y, x, index = "all")
           if (clres$cl[m] == i) {
             for (l in 1:xrows) {
               if (clres$cl[l] == j) {
-                diff <- x[m,] - x[l,]
+                diff <- x[m, ] - x[l, ]
                 diffdist <- sqrt(t(diff) %*% t(t(diff)))
                 fraction <- diffdist / maxdia
-                if (minimum == -1)
+                if (minimum == -1) {
                   minimum <- fraction
-                if (fraction < minimum)
+                }
+                if (fraction < minimum) {
                   minimum <- fraction
+                }
               }
             }
           }
@@ -859,12 +883,18 @@ fclustIndex <- function(y, x, index = "all")
     xrows <- dim(clres$me)[1]
     bexp <- as.integer(1)
     for (j in 1:xrows) {
-      greatint <- as.integer(1 / max(clres$me[j,]))
+      greatint <- as.integer(1 / max(clres$me[j, ]))
       aexp <- as.integer(0)
       for (l in 1:greatint) {
-        aexp <- aexp + (-1) ^ (l + 1) * (gamma(k + 1) / (gamma(l +
-                                                                 1) * gamma(k - l + 1))) * (1 - l * max(clres$me[j,])) ^
-          (k - 1)
+        aexp <- aexp +
+          (-1)^(l + 1) *
+            (gamma(k + 1) /
+              (gamma(
+                l +
+                  1
+              ) *
+                gamma(k - l + 1))) *
+            (1 - l * max(clres$me[j, ]))^(k - 1)
       }
       bexp <- bexp * aexp
     }
@@ -885,10 +915,12 @@ fclustIndex <- function(y, x, index = "all")
         "all"
       )
     )
-  if (any(is.na(index)))
+  if (any(is.na(index))) {
     stop("invalid clustering index")
-  if (any(index == -1))
+  }
+  if (any(index == -1)) {
     stop("ambiguous index")
+  }
   vecallindex <- numeric(9)
   if (any(index == 1) || any(index == 8)) {
     gd <- gath.geva(clres, x)
@@ -896,25 +928,41 @@ fclustIndex <- function(y, x, index = "all")
     vecallindex[2] <- gd$average
     vecallindex[3] <- gd$partition
   }
-  if (any(index == 2) || any(index == 8))
+  if (any(index == 2) || any(index == 8)) {
     vecallindex[4] <- xie.beni(clres)
-  if (any(index == 3) || any(index == 8))
+  }
+  if (any(index == 3) || any(index == 8)) {
     vecallindex[5] <- fukuyama.sugeno(clres)
-  if (any(index == 4) || any(index == 8))
+  }
+  if (any(index == 4) || any(index == 8)) {
     vecallindex[6] <- partition.coefficient(clres)
-  if (any(index == 5) || any(index == 8))
+  }
+  if (any(index == 5) || any(index == 8)) {
     vecallindex[7] <- partition.entropy(clres)
-  if (any(index == 6) || any(index == 8))
+  }
+  if (any(index == 6) || any(index == 8)) {
     vecallindex[8] <- proportion.exponent(clres)
-  if (any(index == 7) || any(index == 8))
+  }
+  if (any(index == 7) || any(index == 8)) {
     vecallindex[9] <- separation.index(clres, x)
-  names(vecallindex) <- c("fhv", "apd", "pd", "xb", "fs", "pc",
-                          "pe", "pre", "si")
+  }
+  names(vecallindex) <- c(
+    "fhv",
+    "apd",
+    "pd",
+    "xb",
+    "fs",
+    "pc",
+    "pe",
+    "pre",
+    "si"
+  )
   if (any(index < 8)) {
-    if (any(index == 1))
+    if (any(index == 1)) {
       vecallindex <- vecallindex[1:3]
-    else
+    } else {
       vecallindex <- vecallindex[index + 2]
+    }
   }
   return(vecallindex)
 }
