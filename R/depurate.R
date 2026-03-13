@@ -57,23 +57,26 @@
 #' @export
 #' @example inst/examples/depurate.R
 
-depurate <- function(x,
-                     y,
-                     toremove = c('edges', 'outlier', 'inlier'),
-                     crs = NULL,
-                     buffer = -10,
-                     ylimitmax = NA,
-                     ylimitmin = 0,
-                     sdout = 3,
-                     ldist = 0,
-                     udist = 40,
-                     criteria = c("LM", "MP"),
-                     zero.policy = NULL,
-                     poly_border = NULL) {
-
-  toremove <- match.arg(toremove,
-                        c('edges', 'outlier', 'inlier'),
-                        several.ok = TRUE)
+depurate <- function(
+  x,
+  y,
+  toremove = c('edges', 'outlier', 'inlier'),
+  crs = NULL,
+  buffer = -10,
+  ylimitmax = NA,
+  ylimitmin = 0,
+  sdout = 3,
+  ldist = 0,
+  udist = 40,
+  criteria = c("LM", "MP"),
+  zero.policy = NULL,
+  poly_border = NULL
+) {
+  toremove <- match.arg(
+    toremove,
+    c('edges', 'outlier', 'inlier'),
+    several.ok = TRUE
+  )
 
   if (!inherits(x, "sf")) {
     stop('x must be an sf object')
@@ -86,19 +89,11 @@ depurate <- function(x,
     }
   }
 
-  stopifnot('y must be a valid columname' =
-              y %in% colnames(x))
+  stopifnot('y must be a valid columname' = y %in% colnames(x))
 
+  criteria <- match.arg(criteria, c('LM', 'MP'), several.ok = TRUE)
 
-  criteria <- match.arg(criteria,
-                        c('LM', 'MP'),
-                        several.ok = TRUE)
-
-
-  is_error <- data.frame('idx' = seq_len(nrow(x)),
-                         'because' = NA_character_)
-
-
+  is_error <- data.frame('idx' = seq_len(nrow(x)), 'because' = NA_character_)
 
   if ('edges' %in% toremove) {
     without_border <- remove_border(
@@ -107,8 +102,7 @@ depurate <- function(x,
       buffer = buffer,
       poly_border = poly_border
     )
-    is_error <- is_error_update(is_error,
-                                without_border)
+    is_error <- is_error_update(is_error, without_border)
 
     x <- without_border$depurated_data
   }
@@ -121,11 +115,9 @@ depurate <- function(x,
       ylimitmin = ylimitmin,
       sdout = sdout
     )
-    is_error <- is_error_update(is_error,
-                                without_outlier)
+    is_error <- is_error_update(is_error, without_outlier)
 
     x <- without_outlier$depurated_data
-
   }
 
   if ('inlier' %in% toremove) {
@@ -138,21 +130,15 @@ depurate <- function(x,
       zero.policy = zero.policy
     )
 
-    is_error <- is_error_update(is_error,
-                                without_inlier)
+    is_error <- is_error_update(is_error, without_inlier)
     x <- without_inlier$depurated_data
   }
 
-  results <- list('depurated_data' = x,
-                  'condition' = is_error$because)
+  results <- list('depurated_data' = x, 'condition' = is_error$because)
 
-  results <- structure(results,
-                       class = c('list', 'paar'))
+  results <- structure(results, class = c('list', 'paar'))
   results
-
 }
-
-
 
 
 #' Remove borders
@@ -170,10 +156,7 @@ depurate <- function(x,
 #' the result of \code{concaveman::concaveman}
 #' @noRd
 #' @keywords internal
-remove_border <- function(x,
-                          crs = NULL,
-                          buffer,
-                          poly_border = NULL) {
+remove_border <- function(x, crs = NULL, buffer, poly_border = NULL) {
   if (!is.numeric(buffer)) {
     stop("buffer must be numeric", call. = FALSE)
   }
@@ -181,18 +164,16 @@ remove_border <- function(x,
   # Checks if x has longlat crs and change it
   if (is.na(sf::st_crs(x))) {
     warning('Please check results due to crs of object x is NA.')
-
   }
 
   if (sf::st_is_longlat(x) & !is.na(sf::st_crs(x))) {
     stopifnot(
-      'coordinates provided in crs are longlat degrees' =
-        !sf::st_is_longlat(crs),
-      'crs must be provided' =
-        !is.null(crs)
+      'coordinates provided in crs are longlat degrees' = !sf::st_is_longlat(
+        crs
+      ),
+      'crs must be provided' = !is.null(crs)
     )
     x <- sf::st_transform(x, crs = crs)
-
   }
 
   # Checks if units package is installed to make buffer in meters
@@ -219,26 +200,30 @@ remove_border <- function(x,
       stop('poly_border must be an sf object', call. = FALSE)
     }
 
-    if (!unique(sf::st_geometry_type(poly_border)) %in% c('POLYGON', 'MULTIPOLYGON')) {
-      stop('poly_border must have only POLYGON or MULTIPOLYGON as geometry type',
-           call. = FALSE)
+    if (
+      !unique(sf::st_geometry_type(poly_border)) %in%
+        c('POLYGON', 'MULTIPOLYGON')
+    ) {
+      stop(
+        'poly_border must have only POLYGON or MULTIPOLYGON as geometry type',
+        call. = FALSE
+      )
     }
 
     if (nrow(poly_border) != 1) {
-      stop(paste(
-        'poly_border must have only one POLYGON (1 row)\n',
-        'has',
-        nrow(poly_border),
-        'rows'
-      ),
-      call. = FALSE)
+      stop(
+        paste(
+          'poly_border must have only one POLYGON (1 row)\n',
+          'has',
+          nrow(poly_border),
+          'rows'
+        ),
+        call. = FALSE
+      )
     }
 
-
     mapa_hull <- poly_border
-
   }
-
 
   if (is.null(poly_border)) {
     if (requireNamespace('concaveman', quietly = TRUE)) {
@@ -259,31 +244,36 @@ remove_border <- function(x,
       )
       mapa_hull <- sf::st_union(x)
       mapa_hull <- sf::st_convex_hull(mapa_hull)
-
     }
   }
-
 
   mapa_buffer <- sf::st_buffer(mapa_hull, buffer)
   emptyGeometry <- sf::st_is_empty(mapa_buffer)
   if (all(emptyGeometry)) {
-    stop(paste0(
-      "'buffer' value (",
-      buffer,
-      ") is higher than all polygons border lengths"
-    ),
-    call. = FALSE)
-
+    stop(
+      paste0(
+        "'buffer' value (",
+        buffer,
+        ") is higher than all polygons border lengths"
+      ),
+      call. = FALSE
+    )
   }
 
   if (any(emptyGeometry)) {
     mapa_buffer <- mapa_buffer[emptyGeometry, ]
-    warning(paste0("Some polygons (", sum(emptyGeometry), ") will be ",
-                   "removed from the analysis ",
-                   "because 'buffer' value (", buffer,
-                   ") is higher than polygon length"),
-            call. = FALSE)
-
+    warning(
+      paste0(
+        "Some polygons (",
+        sum(emptyGeometry),
+        ") will be ",
+        "removed from the analysis ",
+        "because 'buffer' value (",
+        buffer,
+        ") is higher than polygon length"
+      ),
+      call. = FALSE
+    )
   }
 
   is_inside <- sf::st_intersects(x, mapa_buffer)
@@ -296,9 +286,7 @@ remove_border <- function(x,
   condition[!is_inside] <- 'border'
   # x[[condition_name]] <- condition
 
-  list('depurated_data' = mapa_dep,
-       'condition' = condition)
-
+  list('depurated_data' = mapa_dep, 'condition' = condition)
 }
 
 #' @title Removes outliers
@@ -312,20 +300,15 @@ remove_border <- function(x,
 #'  \eqn{mean ± sdout × sdout} values will be removed
 #' @noRd
 #' @keywords internal
-remove_outlier <- function(x,
-                           y,
-                           ylimitmax = NA,
-                           ylimitmin = 0,
-                           sdout = 3) {
+remove_outlier <- function(x, y, ylimitmax = NA, ylimitmin = 0, sdout = 3) {
   stopifnot(
-    'ylimitmax must be numeric or NA' =
-      is.numeric(ylimitmax) |
-      is.na(ylimitmax) | is.null(ylimitmax),
-    'ylimitmin must be numeric or NA' =
-      is.numeric(ylimitmin) |
-      is.na(ylimitmin) | is.null(ylimitmin),
-    'y must be a vald columname' =
-      y %in% colnames(x)
+    'ylimitmax must be numeric or NA' = is.numeric(ylimitmax) |
+      is.na(ylimitmax) |
+      is.null(ylimitmax),
+    'ylimitmin must be numeric or NA' = is.numeric(ylimitmin) |
+      is.na(ylimitmin) |
+      is.null(ylimitmin),
+    'y must be a vald columname' = y %in% colnames(x)
   )
 
   if (is.na(ylimitmax) | is.null(ylimitmax)) {
@@ -335,7 +318,6 @@ remove_outlier <- function(x,
   if (is.na(ylimitmin) | is.null(ylimitmin)) {
     ylimitmax <- -Inf
   }
-
 
   global_min <- x[[y]] <= ylimitmin
   global_max <- x[[y]] >= ylimitmax
@@ -359,9 +341,7 @@ remove_outlier <- function(x,
 
   # x[[condition_name]] <- condition
 
-  list('depurated_data' = mapa_dep,
-       'condition' = condition)
-
+  list('depurated_data' = mapa_dep, 'condition' = condition)
 }
 
 #' @title Remove spatial outliers
@@ -381,20 +361,21 @@ remove_outlier <- function(x,
 #'   weights vectors
 #' @noRd
 #' @keywords internal
-remove_inlier <- function(x,
-                          y,
-                          ldist = 0,
-                          udist = 40,
-                          criteria = c("LM", "MP"),
-                          zero.policy = NULL
-                          ) {
-  stopifnot('x must be sf class' = inherits(x, 'sf'),
-            is.numeric(ldist),
-            is.numeric(udist))
+remove_inlier <- function(
+  x,
+  y,
+  ldist = 0,
+  udist = 40,
+  criteria = c("LM", "MP"),
+  zero.policy = NULL
+) {
+  stopifnot(
+    'x must be sf class' = inherits(x, 'sf'),
+    is.numeric(ldist),
+    is.numeric(udist)
+  )
 
-  criteria <- match.arg(criteria,
-                        c("LM", "MP"),
-                        several.ok = TRUE)
+  criteria <- match.arg(criteria, c("LM", "MP"), several.ok = TRUE)
 
   maxiter <- 10
 
@@ -412,19 +393,24 @@ remove_inlier <- function(x,
       i <- i + 1
       umin <- umin + 10
       gri <- spdep::dnearneigh(x, ldist, umin)
-      lw <- try(spdep::nb2listw(gri, style = 'W', zero.policy = zero.policy),
-                silent = TRUE)
+      lw <- try(
+        spdep::nb2listw(gri, style = 'W', zero.policy = zero.policy),
+        silent = TRUE
+      )
 
-      if (all(class(lw) != 'try-error') | i >= maxiter)
+      if (all(class(lw) != 'try-error') | i >= maxiter) {
         lw_found <- FALSE
+      }
       break
     }
   }
 
   if (!lw_found) {
-    stop('Neighbours cannot be identified\n',
-         'try modifying the ldist or udist values',
-         call. = FALSE)
+    stop(
+      'Neighbours cannot be identified\n',
+      'try modifying the ldist or udist values',
+      call. = FALSE
+    )
   }
 
   condition <- rep(NA_character_, nrow(x))
@@ -433,36 +419,39 @@ remove_inlier <- function(x,
   Influ_LM <- rep(FALSE, nrow(x))
   Influ_MP <- rep(FALSE, nrow(x))
   if ("LM" %in% criteria) {
-  LM <- spdep::localmoran(x[[y]],
-                          lw,
-                          # p.adjust.method = 'bonferroni',
-                          alternative = 'less',
-                          zero.policy = zero.policy)
-  # Influence by Local Moran
-  # Search column name which start with Pr
-  # since spdep >= 1.1.11 change old names
-  myColnameProb <- colnames(LM)[grepl("Pr\\(z" , colnames(LM))]
+    LM <- spdep::localmoran(
+      x[[y]],
+      lw,
+      # p.adjust.method = 'bonferroni',
+      alternative = 'less',
+      zero.policy = zero.policy
+    )
+    # Influence by Local Moran
+    # Search column name which start with Pr
+    # since spdep >= 1.1.11 change old names
+    myColnameProb <- colnames(LM)[grepl("Pr\\(z", colnames(LM))]
 
-  Influ_LM <- LM[, 'Ii'] < 0 & LM[, myColnameProb] < 0.05
-  condition[Influ_LM] <- 'spatial outlier LM'
+    Influ_LM <- LM[, 'Ii'] < 0 & LM[, myColnameProb] < 0.05
+    condition[Influ_LM] <- 'spatial outlier LM'
   }
   # Influence by MoranPlot
   if ("MP" %in% criteria) {
-  MP <- spdep::moran.plot(x[[y]],
-                          lw,
-                          quiet = TRUE,
-                          plot = FALSE,
-                          zero.policy = zero.policy)
+    MP <- spdep::moran.plot(
+      x[[y]],
+      lw,
+      quiet = TRUE,
+      plot = FALSE,
+      zero.policy = zero.policy
+    )
 
-  Influ_MP <- MP$is_inf
-  condition[Influ_MP] <- 'spatial outlier MP'
+    Influ_MP <- MP$is_inf
+    condition[Influ_MP] <- 'spatial outlier MP'
   }
   # x[[condition_name]] <- condition
 
   mapa_dep <- subset(x, !(Influ_LM | Influ_MP))
 
-  list('depurated_data' = mapa_dep,
-       'condition' = condition)
+  list('depurated_data' = mapa_dep, 'condition' = condition)
 }
 
 
@@ -474,7 +463,7 @@ remove_inlier <- function(x,
 #' @keywords internal
 is_error_update <- function(is_error, remove_result) {
   # Keeps NA, others are conditions
-  is_error_no_na <- is_error[is.na(is_error$because),]
+  is_error_no_na <- is_error[is.na(is_error$because), ]
   idx_remove_result <- which(!is.na(remove_result$condition))
 
   mycondition <-
@@ -483,15 +472,11 @@ is_error_update <- function(is_error, remove_result) {
   is_error_no_na[idx_remove_result, 'because'] <- mycondition
   # Merge original conditions with new conditions
   is_error_merged <-
-    merge(is_error,
-          is_error_no_na,
-          by = "idx",
-          all.x = TRUE)
+    merge(is_error, is_error_no_na, by = "idx", all.x = TRUE)
   # Keeps all conditions of removal
   is_error_merged$because <-
     do.call(pmax, c(is_error_merged[, -1], na.rm = TRUE))
 
   # Find dots in colnames and remove that columns (they are from merge function)
   is_error_merged[, !agrepl("\\.", colnames(is_error_merged))]
-
 }

@@ -1,4 +1,3 @@
-
 #' Summarizing paar objects
 #' @inheritParams base::summary
 #' @returns An object of class summary.paar (data.frame) with the following columns:
@@ -23,15 +22,16 @@ summary.paar <- function(object, ...) {
   df_condition <-
     data.frame(
       'condition' = names(fr_condition_table),
-      cbind('n' = fr_condition_table,
-            'percentage' = pr_condition_table)
+      cbind('n' = fr_condition_table, 'percentage' = pr_condition_table)
     )
   rownames(df_condition) <- NULL
 
   # message(f_condition_table)
   # f_condition_table
-  df_condition <- structure(df_condition,
-                            class = c('summary.paar', 'data.frame'))
+  df_condition <- structure(
+    df_condition,
+    class = c('summary.paar', 'data.frame')
+  )
   df_condition
 }
 
@@ -46,12 +46,14 @@ print.summary.paar <- function(x, digits, ...) {
   pr_f_condition_table <- x[['percentage']]
   pr_f_condition_table <-
     paste0(signif(pr_f_condition_table, 2), '%')
-  f_condition_table <- paste0(fr_condition_table, ' (',
-                              pr_f_condition_table, ')')
+  f_condition_table <- paste0(
+    fr_condition_table,
+    ' (',
+    pr_f_condition_table,
+    ')'
+  )
   names(f_condition_table) <- x[['condition']]
-  print(f_condition_table,
-        quote = FALSE,
-        right = TRUE)
+  print(f_condition_table, quote = FALSE, right = TRUE)
 }
 
 #' Print paar objects
@@ -61,25 +63,26 @@ print.summary.paar <- function(x, digits, ...) {
 #' @return invisible object x
 #' @export
 print.paar <- function(x, n = 3, ...) {
-  p_removed <- sum(!is.na(x$condition))/length(x$condition)*100
+  p_removed <- sum(!is.na(x$condition)) / length(x$condition) * 100
   p_removed_f <- paste0(signif(p_removed, 2), '%')
   n_normal <- sum(is.na(x$condition))
-  cat('Depurated data has', n_normal,'rows.\n')
-  cat('The process removed',
-      p_removed_f,
-      'of original data.\n\n')
+  cat('Depurated data has', n_normal, 'rows.\n')
+  cat('The process removed', p_removed_f, 'of original data.\n\n')
   cat('$depurated_data\n')
   print(x$depurated_data, n = n)
   cat('\n\n')
   cat('$condition\n')
-  cat('vector of length', paste0(length(x$condition),'.'),
-      'First', n, 'elements:\n')
+  cat(
+    'vector of length',
+    paste0(length(x$condition), '.'),
+    'First',
+    n,
+    'elements:\n'
+  )
   print(utils::head(x$condition, n = n))
 
   invisible(x)
-
 }
-
 
 
 #' Bind outlier condition to an object.
@@ -106,7 +109,9 @@ cbind.paar = function(..., deparse.level = 1) {
       stop('Only one object to bind is allowed.', .call = FALSE)
     }
     dots[classes][[1]] <- dots[classes][[1]][['condition']]
-    if (is.null(names(dots))) {names(dots) <- rep('', length(dots))}
+    if (is.null(names(dots))) {
+      names(dots) <- rep('', length(dots))
+    }
     if (names(dots)[classes] == "") {
       names(dots)[classes] <- 'condition'
     }
@@ -114,5 +119,4 @@ cbind.paar = function(..., deparse.level = 1) {
   } else {
     stop('No paar object found.')
   }
-
 }

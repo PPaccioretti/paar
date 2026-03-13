@@ -11,20 +11,20 @@
 #' @export
 #' @example inst/examples/fuzzy_k_means.R
 #'
-fuzzy_k_means <- function(data,
-                          variables,
-                          number_cluster = 3:5,
-                          fuzzyness = 1.2,
-                          distance = "euclidean") {
-
+fuzzy_k_means <- function(
+  data,
+  variables,
+  number_cluster = 3:5,
+  fuzzyness = 1.2,
+  distance = "euclidean"
+) {
   if (missing(variables)) {
     myNumVars <-
       unlist(lapply(sf::st_drop_geometry(data), is.numeric))
     if (sum(myNumVars) == 0) {
       stop('Non numeric variables were found in data')
     }
-    warning("The numeric Variable will be used to make clusters",
-            call. = FALSE)
+    warning("The numeric Variable will be used to make clusters", call. = FALSE)
     variables <- names(sf::st_drop_geometry(data))[myNumVars]
   }
 
@@ -42,29 +42,29 @@ fuzzy_k_means <- function(data,
     any(is.na(x))
   })
 
-
   data <- stats::na.omit(data)
   data_clust <- data
 
   if (inherits(data_clust, "sf")) {
-    data_clust <-  sf::st_drop_geometry(data_clust)
+    data_clust <- sf::st_drop_geometry(data_clust)
   }
 
-  my_results <- make_clasification(data_clust,
-                                   number_cluster,
-                                   fuzzyness = fuzzyness,
-                                   distance = distance)
+  my_results <- make_clasification(
+    data_clust,
+    number_cluster,
+    fuzzyness = fuzzyness,
+    distance = distance
+  )
 
-
-  cluster_na <- data.frame(matrix(NA,
-                                  nrow = raw_nrow,
-                                  ncol = ncol(my_results$cluster)))
+  cluster_na <- data.frame(matrix(
+    NA,
+    nrow = raw_nrow,
+    ncol = ncol(my_results$cluster)
+  ))
   colnames(cluster_na) <- colnames(my_results$cluster)
   cluster_na[!myNArows, ] <- my_results$cluster
   # Return cluster as character
   cluster_na <- apply(cluster_na, 2, as.character)
   my_results$cluster <- cluster_na
   my_results
-
 }
-

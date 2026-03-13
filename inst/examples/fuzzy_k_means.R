@@ -2,14 +2,14 @@ library(sf)
 data(wheat, package = 'paar')
 
 # Transform the data.frame into a sf object
-wheat_sf <- st_as_sf(wheat,
-                     coords = c('x', 'y'),
-                     crs = 32720)
+wheat_sf <- st_as_sf(wheat, coords = c('x', 'y'), crs = 32720)
 
 # Run the fuzzy_k_means function
-fuzzy_k_means_results <- fuzzy_k_means(wheat_sf,
-                               variables = 'Tg',
-                               number_cluster = 2:4)
+fuzzy_k_means_results <- fuzzy_k_means(
+  wheat_sf,
+  variables = 'Tg',
+  number_cluster = 2:4
+)
 
 # Print the summaryResults
 fuzzy_k_means_results$summaryResults
