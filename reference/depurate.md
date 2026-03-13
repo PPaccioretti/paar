@@ -132,12 +132,10 @@ https://doi.org/10.1007/s11119-018-09632-8
 library(sf)
 data(barley, package = 'paar')
 #Convert to an sf object
-barley <- st_as_sf(barley,
-                   coords = c("X", "Y"),
-                   crs = 32720)
+barley <- st_as_sf(barley, coords = c("X", "Y"), crs = 32720)
+
 depurated <-
-  depurate(barley,
-           "Yield")
+  depurate(barley, "Yield")
 #> Concave hull algorithm is computed with
 #> concavity = 2 and length_threshold = 0
 

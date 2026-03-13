@@ -137,13 +137,10 @@ clusters.</p>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">wheat</span>, package <span class="op">=</span> <span class="st">'paar'</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Transform the data.frame into a sf object</span></span></span>
-<span class="r-in"><span><span class="va">wheat_sf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html" class="external-link">st_as_sf</a></span><span class="op">(</span><span class="va">wheat</span>,</span></span>
-<span class="r-in"><span>                     coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'x'</span>, <span class="st">'y'</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                     crs <span class="op">=</span> <span class="fl">32720</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">wheat_sf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html" class="external-link">st_as_sf</a></span><span class="op">(</span><span class="va">wheat</span>, coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'x'</span>, <span class="st">'y'</span><span class="op">)</span>, crs <span class="op">=</span> <span class="fl">32720</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Run the kmspc function</span></span></span>
-<span class="r-in"><span><span class="va">kmspc_results</span> <span class="op">&lt;-</span> <span class="fu">kmspc</span><span class="op">(</span><span class="va">wheat_sf</span>,</span></span>
-<span class="r-in"><span>                       number_cluster <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">kmspc_results</span> <span class="op">&lt;-</span> <span class="fu">kmspc</span><span class="op">(</span><span class="va">wheat_sf</span>, number_cluster <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="fl">4</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>All numeric Variables will be used to make clusters</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Print the summaryResults</span></span></span>
