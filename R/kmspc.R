@@ -1,29 +1,75 @@
-#' MULTISPATI-PCA clustering
+#' Spatial PCA-based fuzzy clustering (MULTISPATI-PCA)
+#'
+#' @description
+#' Performs clustering of spatial data using a combination of spatial
+#' Principal Component Analysis (PCA), and fuzzy k-means clustering.
+#'
+#' The workflow consists of:
+#' \enumerate{
+#'   \item Dimensionality reduction using spatial PCA
+#'   \item Selection of components based on explained spatial variance
+#'   \item Fuzzy clustering over selected components
+#' }
 #'
 #'
 #' @inheritParams depurate
-#' @param data sf object
-#' @param variables variables to use for clustering, if missing, all numeric
-#' variables will be used
-#' @param number_cluster \code{numeric} vector with number of final clusters
-#' @param explainedVariance \code{numeric} number in percentage of explained variance
-#' from PCA analysis to keep and make cluster process
-#' @param fuzzyness A number greater than 1 giving the degree of fuzzification.
-#' @param center a logical or numeric value, centring option
-#' if TRUE, centring by the mean
-#' if FALSE no centring
-#' if a numeric vector, its length must be equal to the number of
-#' columns of the data frame df and gives the decentring
-#' @param distance \code{character} Must be one of the following:
-#' If "euclidean", the mean square error, if "manhattan", the mean
-#' absolute error is computed. Abbreviations are also accepted.
-#' @param only_spca_results \code{logical}; should return both PCA and sPCA
-#' results (\code{FALSE}), or only sPCA results (\code{TRUE})? This can be a
-#' time consuming process if there are multiple variables.
-#' @param all_results \code{logical}; should return the results from the
-#' sPCA and PCA call?
-#' @return a list with classification results and indices to select best number of
-#' clusters.
+#' @param data an \code{sf} object with point geometries
+#'
+#' @param variables \code{character} vector with variable names used for clustering.
+#'   If missing, all numeric variables in \code{data} are used.
+#'
+#' @param number_cluster \code{numeric} vector indicating the number of clusters
+#'   to evaluate (e.g., \code{3:5})
+#'
+#' @param explainedVariance \code{numeric}. Percentage (0–100) of cumulative
+#'   explained spatial variance used to select spatial principal components.
+#'   Values between 0 and 1 are interpreted as proportions.
+#'
+#' @param fuzzyness \code{numeric} value greater than 1 controlling the degree of
+#'   fuzziness in clustering (see \code{e1071::cmeans})
+#'
+#' @param center centering option passed to PCA:
+#'   \describe{
+#'     \item{TRUE}{center variables by their mean}
+#'     \item{FALSE}{no centering}
+#'     \item{numeric}{custom centering vector}
+#'   }
+#'
+#' @param distance \code{character} distance metric for clustering.
+#'   One of \code{"euclidean"} or \code{"manhattan"} (abbreviations allowed)
+#'
+#' @param only_spca_results \code{logical}. If \code{TRUE}, only spatial PCA results
+#'   are returned. If \code{FALSE}, both PCA and spatial PCA summaries are included.
+#'
+#' @param all_results \code{logical}. If \code{TRUE}, full PCA and spatial PCA
+#'   objects are returned (can increase computation time and memory use).
+#'
+#' @param ldist,udist \code{numeric}. Lower and upper distance thresholds used
+#'   to define spatial neighbors.
+#'
+#' @details
+#' Spatial relationships are defined using distance-based neighbors
+#' (\code{spdep::dnearneigh}). These relationships are incorporated into the
+#' spatial PCA analysis to extract spatially structured components.
+#'
+#' Clustering is performed using fuzzy c-means over selected spatial components.
+#' Several indices are computed to help determine the optimal number of clusters:
+#' \itemize{
+#'   \item Xie-Beni index
+#'   \item Partition coefficient
+#'   \item Partition entropy
+#'   \item Summary index (normalized combination)
+#' }
+#'
+#' @return
+#' A list with the following elements:
+#' \describe{
+#'   \item{cluster}{\code{data.frame} with cluster assignments for each evaluated number of clusters}
+#'   \item{indices}{\code{data.frame} with clustering validity indices}
+#'   \item{summaryResults}{\code{data.frame} with clustering metrics (iterations, SSDW)}
+#'   \item{pca_results}{(optional) PCA and/or spatial PCA summaries depending on arguments}
+#' }
+#'
 #' @export
 #' @example inst/examples/kmspc.R
 #'
