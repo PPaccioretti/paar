@@ -81,7 +81,8 @@ compare_zone <- function(
       zonesCol,
       descriptive,
       returnLSD = returnLSD,
-      join = join
+      join = join,
+      alpha = alpha
     )
 
   list(
@@ -100,7 +101,8 @@ validVarKrig <-
     numCluster,
     descStat,
     join = sf::st_nearest_feature,
-    returnLSD
+    returnLSD,
+    alpha = 0.05
   ) {
     MedCV <-
       paste0(round(descStat$MediaVar, 2), " (", round(descStat$CVVar, 1), ")")
@@ -128,7 +130,8 @@ validVarKrig <-
             numCluster = numCluster,
             descStat = descStat,
             join = join,
-            retDMS = returnLSD
+            retDMS = returnLSD,
+            alpha = alpha
           )
         })
       names(MeansComparissons) <- colnames(sf::st_drop_geometry(dataToCompare))
@@ -140,7 +143,8 @@ validVarKrig <-
           Clasif = clusterData,
           numCluster = numCluster,
           descStat = descStat,
-          retDMS = returnLSD
+          retDMS = returnLSD,
+          alpha = alpha
         )
 
       names(MeansComparissons) <- dataToCompare
