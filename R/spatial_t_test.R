@@ -1,15 +1,38 @@
 #' Modified t test
 #'
 #'
-#' @description Performs a modified version of the t test to assess the
-#' correlation between spatial processes. See SpatialPack::modified.ttest for details.
+#' @description
+#' Performs a modified t-test to assess the correlation between variables
+#' while accounting for spatial autocorrelation. This implementation wraps
+#' \code{SpatialPack::modified.ttest}.
 #'
-#' @param data \code{sf} data to extract coordinates or two
-#' columns \code{matrix} or \code{data.frame} specifying coordinates.
+#' @details
+#' The function computes pairwise correlations between the specified variables
+#' and adjusts the significance test to account for spatial dependence using
+#' coordinates. If \code{data} is an \code{sf} object, coordinates are extracted
+#' automatically. Otherwise, coordinates must be provided as an object with two
+#' columns.
 #'
-#' @param variables \code{character} vector with column names to perform ttest
-#' @return a data.frame with the correlation and p-value for each pair
-#'  of variables
+#' @param data An \code{sf} object containing geometry and variables, or a
+#'   \code{matrix}/\code{data.frame} with two columns representing
+#'   spatial coordinates (e.g., X and Y).
+#'
+#' @param variables A \code{character} vector with the names of the variables
+#'   to be tested. If \code{data} is not an \code{sf} object, this should be a
+#'   matrix or data.frame of variables to test.
+#'
+#' @return A \code{data.frame} with the following columns:
+#' \describe{
+#'   \item{Var1}{Name of the first variable}
+#'   \item{Var2}{Name of the second variable}
+#'   \item{corr}{Estimated correlation coefficient}
+#'   \item{p.value}{P-value adjusted for spatial autocorrelation}
+#' }
+#'
+#' @seealso \code{\link[SpatialPack]{modified.ttest}}
+#'
+#' @example inst/examples/spatial_t_test.R
+#'
 #' @export
 
 spatial_t_test <- function(data, variables) {

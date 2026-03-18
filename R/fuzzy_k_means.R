@@ -1,15 +1,42 @@
-#' Fuzzy k-means clustering
+#' Fuzzy k-means clustering (non-spatial)
 #'
-#' @description Performs a vectorized fuzzy k-means clustering, this procedure
-#' it is not spatial. The function is almost a wrapper of the function cmeans
-#' from the package e1071. Is intended to be used when `KM-sPC` procedure is not
-#' possible because data set has only 1 variable.
+#' @description
+#' Performs fuzzy k-means clustering on tabular data (non-spatial).
+#' This function is a lightweight wrapper around \code{e1071::cmeans},
+#' providing a vectorized workflow and clustering quality indices.
+#'
+#' It is primarily intended as a fallback method when spatial clustering
+#' (e.g., \code{kmspc}) cannot be applied, such as when only one variable
+#' is available.
+#'
 #'
 #' @inheritParams kmspc
-#' @return a list with classification results and indices to select best number of
-#' clusters.
-#' @export
+#' @details
+#' Missing values are removed prior to clustering. Observations with missing
+#' values are reintroduced in the output with \code{NA} cluster assignments.
+#'
+#' Clustering is performed for each value in \code{number_cluster}, and
+#' several indices are returned to assist in selecting the optimal number
+#' of clusters:
+#' \itemize{
+#'   \item Xie-Beni index
+#'   \item Partition coefficient
+#'   \item Partition entropy
+#'   \item Summary index
+#' }
+#'
+#' @return
+#' A list with:
+#' \describe{
+#'   \item{cluster}{\code{data.frame} with cluster assignments for each
+#'   evaluated number of clusters}
+#'   \item{indices}{\code{data.frame} with clustering validity indices}
+#'   \item{summaryResults}{\code{data.frame} with clustering metrics}
+#' }
+#'
+#' @seealso \code{\link{kmspc}}
 #' @example inst/examples/fuzzy_k_means.R
+#' @export
 #'
 fuzzy_k_means <- function(
   data,
@@ -22,10 +49,13 @@ fuzzy_k_means <- function(
     myNumVars <-
       unlist(lapply(sf::st_drop_geometry(data), is.numeric))
     if (sum(myNumVars) == 0) {
-      stop('Non numeric variables were found in data')
+      stop('No numeric variables found in data')
     }
-    warning("The numeric Variable will be used to make clusters", call. = FALSE)
+    warning("Numeric variables will be used for clustering", call. = FALSE)
     variables <- names(sf::st_drop_geometry(data))[myNumVars]
+    message(
+      paste("Using variables:", paste(variables, collapse = ", "))
+    )
   }
 
   # if (!inherits(data, "sf") & (length(variables) == 1)) {

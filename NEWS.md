@@ -1,7 +1,8 @@
 # (development version)
 
+* Help pages were revised for clarity, consistency, and improved user guidance [#21](https://github.com/PPaccioretti/paar/issues/21)
 * Now Summary index is calculated correctly. 
-* PCA results can be obtained within kmspc function
+* PCA results can be obtained within kmspc function.
 * Factor recoding.
 
 # paar 1.0.1

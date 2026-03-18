@@ -7,16 +7,54 @@
 spatial_t_test(data, variables)
 }
 \arguments{
-\item{data}{\code{sf} data to extract coordinates or two
-columns \code{matrix} or \code{data.frame} specifying coordinates.}
+\item{data}{An \code{sf} object containing geometry and variables, or a
+\code{matrix}/\code{data.frame} with two columns representing
+spatial coordinates (e.g., X and Y).}
 
-\item{variables}{\code{character} vector with column names to perform ttest}
+\item{variables}{A \code{character} vector with the names of the variables
+to be tested. If \code{data} is not an \code{sf} object, this should be a
+matrix or data.frame of variables to test.}
 }
 \value{
-a data.frame with the correlation and p-value for each pair
- of variables
+A \code{data.frame} with the following columns:
+\describe{
+  \item{Var1}{Name of the first variable}
+  \item{Var2}{Name of the second variable}
+  \item{corr}{Estimated correlation coefficient}
+  \item{p.value}{P-value adjusted for spatial autocorrelation}
+}
 }
 \description{
-Performs a modified version of the t test to assess the
-correlation between spatial processes. See SpatialPack::modified.ttest for details.
+Performs a modified t-test to assess the correlation between variables
+while accounting for spatial autocorrelation. This implementation wraps
+\code{SpatialPack::modified.ttest}.
+}
+\details{
+The function computes pairwise correlations between the specified variables
+and adjusts the significance test to account for spatial dependence using
+coordinates. If \code{data} is an \code{sf} object, coordinates are extracted
+automatically. Otherwise, coordinates must be provided as an object with two
+columns.
+}
+\examples{
+if (requireNamespace("SpatialPack", quietly = TRUE)) {
+  library(sf)
+  data(wheat, package = 'paar')
+
+  # Transform the data.frame into a sf object
+  wheat_sf <- st_as_sf(wheat, coords = c('x', 'y'), crs = 32720)
+
+  # Run spatial t test
+  t_test_results <-
+    spatial_t_test(
+      wheat_sf,
+      variables = c('CE30', 'CE90')
+    )
+
+  # Print the t_test_results
+  t_test_results
+}
+}
+\seealso{
+\code{\link[SpatialPack]{modified.ttest}}
 }
