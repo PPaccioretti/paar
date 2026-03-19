@@ -1,8 +1,8 @@
-# Remove errors from spatial data
+# Spatial data depuration (error removal)
 
-Data can be filtered by null, edge values, global outliers and spatial
-outliers or local defective observations. Default values are optimized
-for precision agricultural data.
+Filters spatial point data by removing erroneous observations based on
+geometric, statistical, and spatial criteria. The function implements a
+sequential depuration workflow commonly used in precision agriculture.
 
 ## Usage
 
@@ -28,103 +28,125 @@ depurate(
 
 - x:
 
-  an `sf` points object
+  An `sf` object with POINT geometries.
 
 - y:
 
-  `character` with the name of the variable to use for
-  depuration/filtering process
+  A `character` string indicating the variable name used for filtering.
+  If missing and only one attribute column is present, it is used by
+  default.
 
 - toremove:
 
-  `character` vector specifying the procedure to implement for errors
-  removal. Default 'edges', 'outlier', 'inlier'. See Details.
+  A `character` vector specifying which procedures to apply. Options are
+  `"edges"`, `"outlier"`, and `"inlier"`. The order of execution is
+  fixed and cannot be modified.
 
 - crs:
 
-  coordinate reference system: integer with the EPSG code, or character
-  with proj4string to convert coordinates if `x` has longitude/latitude
-  data
+  Coordinate reference system used when transforming longitude/latitude
+  data. Can be an EPSG code or proj4string.
 
 - buffer:
 
-  `numeric` distance in meters to be removed. Negative values are
-  recommended
+  A `numeric` value indicating the distance (in meters) for edge
+  removal. Negative values are recommended to shrink boundaries.
 
 - ylimitmax:
 
-  `numeric` of length 1 indicating the maximum limit for the `y`
-  variable. If `NA` `Inf` is assumed
+  Numeric upper bound for `y`. If `NA`, `Inf` is used.
 
 - ylimitmin:
 
-  `numeric` of length 1 indicating the minimum limit for the `y`
-  variable. If `NA` `-Inf` is assumed
+  Numeric lower bound for `y`. If `NA`, `-Inf` is used.
 
 - sdout:
 
-  `numeric` values outside the interval \\mean ± sdout × sdout\\ values
-  will be removed
+  Numeric multiplier for standard deviation used to detect global
+  outliers.
 
 - ldist:
 
-  `numeric` lower distance bound to identify neighbors
+  Numeric lower distance bound for neighborhood definition.
 
 - udist:
 
-  `numeric` upper distance bound to identify neighbors
+  Numeric upper distance bound for neighborhood definition.
 
 - criteria:
 
-  `character` with "LM" and/or "MP" for methods to identify spatial
-  outliers
+  Character vector specifying spatial outlier detection methods: `"LM"`
+  (Local Moran) and/or `"MP"` (Moran Plot).
 
 - zero.policy:
 
-  default NULL, use global option value; if FALSE stop with error for
-  any empty neighbors sets, if TRUE permit the weights list to be formed
-  with zero-length weights vectors
+  Logical. If `TRUE`, allows empty neighbor sets; if `FALSE`, stops with
+  an error.
 
 - poly_border:
 
-  `sf` object with one polygon or NULL. Can be the result of
-  [`concaveman::concaveman`](https://joelgombin.github.io/concaveman/reference/concaveman.html)
+  Optional `sf` polygon defining field boundaries. If `NULL`, a hull is
+  computed automatically.
 
 ## Value
 
-an object of class `paar` with two elements:
+An object of class `paar` (list) with:
 
 - depurated_data:
 
-  `sf` object with the data after the removal process
+  Filtered `sf` object
 
 - condition:
 
-  `character` vector with the condition of each observation
+  Character vector indicating the reason each observation was removed
+  (or `NA` if retained)
 
 ## Details
 
-Possible values for `toremove` are one or more elements of:
+The depuration process is applied in a fixed sequence:
+
+1.  Edge removal (`"edges"`)
+
+2.  Global outlier removal (`"outlier"`)
+
+3.  Spatial outlier removal (`"inlier"`)
+
+The `toremove` argument controls which of these steps are applied, but
+\*\*does not modify the order of execution\*\*.
+
+Available procedures are:
 
 - edges:
 
-  All data points for a distance of `buffer` m from data edges are
-  deleted.
+  Removes points located within a specified `buffer` distance from the
+  field boundary. The boundary is computed using a concave hull
+  (`concaveman`) or a convex hull if the package is not available.
 
 - outlier:
 
-  Values that are outside the mean±`sdout` are removed
+  Removes global outliers based on:
+
+  - user-defined limits (`ylimitmin`, `ylimitmax`)
+
+  - statistical thresholds defined as \\mean \pm sdout \times sd\\
 
 - inlier:
 
-  Local Moran index of spatial autocorrelation is calculated for each
-  datum as a tool to identify inliers
+  Identifies and removes spatial outliers using:
+
+  - Local Moran's I statistic ("LM")
+
+  - Moran scatterplot influence ("MP")
+
+Default parameter values are tuned for precision agriculture datasets
+(e.g., yield maps).
 
 ## References
 
-Vega, A., Córdoba, M., Castro-Franco, M. et al. Protocol for automating
-error removal from yield maps. Precision Agric 20, 1030–1044 (2019).
-https://doi.org/10.1007/s11119-018-09632-8
+Vega, A., Córdoba, M., Castro-Franco, M. et al. (2019). Protocol for
+automating error removal from yield maps. *Precision Agriculture*, 20,
+1030–1044.
+[doi:10.1007/s11119-018-09632-8](https://doi.org/10.1007/s11119-018-09632-8)
 
 ## Examples
 

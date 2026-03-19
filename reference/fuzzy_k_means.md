@@ -1,9 +1,13 @@
-# Fuzzy k-means clustering
+# Fuzzy k-means clustering (non-spatial)
 
-Performs a vectorized fuzzy k-means clustering, this procedure it is not
-spatial. The function is almost a wrapper of the function cmeans from
-the package e1071. Is intended to be used when \`KM-sPC\` procedure is
-not possible because data set has only 1 variable.
+Performs fuzzy k-means clustering on tabular data (non-spatial). This
+function is a lightweight wrapper around
+[`e1071::cmeans`](https://rdrr.io/pkg/e1071/man/cmeans.html), providing
+a vectorized workflow and clustering quality indices.
+
+It is primarily intended as a fallback method when spatial clustering
+(e.g., `kmspc`) cannot be applied, such as when only one variable is
+available.
 
 ## Usage
 
@@ -21,31 +25,67 @@ fuzzy_k_means(
 
 - data:
 
-  sf object
+  an `sf` object with point geometries
 
 - variables:
 
-  variables to use for clustering, if missing, all numeric variables
-  will be used
+  `character` vector with variable names used for clustering. If
+  missing, all numeric variables in `data` are used.
 
 - number_cluster:
 
-  `numeric` vector with number of final clusters
+  `numeric` vector indicating the number of clusters to evaluate (e.g.,
+  `3:5`)
 
 - fuzzyness:
 
-  A number greater than 1 giving the degree of fuzzification.
+  `numeric` value greater than 1 controlling the degree of fuzziness in
+  clustering (see
+  [`e1071::cmeans`](https://rdrr.io/pkg/e1071/man/cmeans.html))
 
 - distance:
 
-  `character` Must be one of the following: If "euclidean", the mean
-  square error, if "manhattan", the mean absolute error is computed.
-  Abbreviations are also accepted.
+  `character` distance metric for clustering. One of `"euclidean"` or
+  `"manhattan"` (abbreviations allowed)
 
 ## Value
 
-a list with classification results and indices to select best number of
-clusters.
+A list with:
+
+- cluster:
+
+  `data.frame` with cluster assignments for each evaluated number of
+  clusters
+
+- indices:
+
+  `data.frame` with clustering validity indices
+
+- summaryResults:
+
+  `data.frame` with clustering metrics
+
+## Details
+
+Missing values are removed prior to clustering. Observations with
+missing values are reintroduced in the output with `NA` cluster
+assignments.
+
+Clustering is performed for each value in `number_cluster`, and several
+indices are returned to assist in selecting the optimal number of
+clusters:
+
+- Xie-Beni index
+
+- Partition coefficient
+
+- Partition entropy
+
+- Summary index
+
+## See also
+
+[`kmspc`](https://ppaccioretti.github.io/paar/reference/kmspc.md)
 
 ## Examples
 

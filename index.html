@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="index.html">paar</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -67,7 +67,7 @@
 </div>
 <!-- badges: start -->
 
-<p>The goal of <code>paar</code> is to provide useful functions for precision agriculture spatial data depuration.</p>
+<p>The goal of <code>paar</code> is to provide useful tools for cleaning and processing spatial data in precision agriculture.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -82,21 +82,19 @@
 <div class="section level2">
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h2>
-<p>The package has a complete protocol for automating error removal. Default values of all functions are optimized for precision agricultural data.</p>
+<p>The package provides a complete protocol for automated error removal. Default values of all functions are optimized for precision agriculture data.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ppaccioretti.github.io/paar/">paar</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: package 'sf' was built under R version 4.5.2</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"barley"</span>, package <span class="op">=</span> <span class="st">'paar'</span><span class="op">)</span></span></code></pre></div>
-<p><code>barley</code> data contains barley grain yield which were obtained using calibrated commercial yield monitors, mounted on combines equipped with DGPS.</p>
+<p>The <code>barley</code> dataset contains grain yield data collected were using calibrated commercial yield monitors, mounted on combines equipped with DGPS.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#Convert barley data to an spatial object</span></span>
-<span><span class="va">barley_sf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html" class="external-link">st_as_sf</a></span><span class="op">(</span><span class="va">barley</span>,</span>
-<span>                   coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"X"</span>, <span class="st">"Y"</span><span class="op">)</span>,</span>
-<span>                   crs <span class="op">=</span> <span class="fl">32720</span><span class="op">)</span></span>
+<span><span class="va">barley_sf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html" class="external-link">st_as_sf</a></span><span class="op">(</span><span class="va">barley</span>, coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"X"</span>, <span class="st">"Y"</span><span class="op">)</span>, crs <span class="op">=</span> <span class="fl">32720</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">barley_dep</span> <span class="op">&lt;-</span></span>
-<span>  <span class="fu"><a href="reference/depurate.html">depurate</a></span><span class="op">(</span><span class="va">barley_sf</span>,</span>
-<span>           <span class="st">"Yield"</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="reference/depurate.html">depurate</a></span><span class="op">(</span><span class="va">barley_sf</span>, <span class="st">"Yield"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Concave hull algorithm is computed with</span></span>
 <span><span class="co">#&gt; concavity = 2 and length_threshold = 0</span></span>
 <span></span>
@@ -106,16 +104,16 @@
 <span><span class="co">#&gt;         5673 (77%)          964 (13%)         343 (4.6%)         309 (4.2%) </span></span>
 <span><span class="co">#&gt;         global min            outlier </span></span>
 <span><span class="co">#&gt;          99 (1.3%)         6 (0.081%)</span></span></code></pre></div>
-<p>Spatial yield values before and after depuration process can be plotted</p>
+<p>Spatial yield values before and after the depuration process can be visualized</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">barley_sf</span><span class="op">[</span><span class="st">"Yield"</span><span class="op">]</span>, main <span class="op">=</span> <span class="st">"Before depuration"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">barley_dep</span><span class="op">$</span><span class="va">depurated_data</span><span class="op">[</span><span class="st">"Yield"</span><span class="op">]</span>, main <span class="op">=</span> <span class="st">"After depuration"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-2-1.png" width="50%"><img src="reference/figures/README-unnamed-chunk-2-2.png" width="50%"></p>
-<p>Also distribution of yield values can be plotted</p>
+<p><img src="reference/figures/README-unnamed-chunk-2-1.png" alt="" width="50%"><img src="reference/figures/README-unnamed-chunk-2-2.png" alt="" width="50%"></p>
+<p>The distribution of yield values can also be compared</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/boxplot.html" class="external-link">boxplot</a></span><span class="op">(</span><span class="va">barley_sf</span><span class="op">[[</span><span class="st">"Yield"</span><span class="op">]</span><span class="op">]</span>, main <span class="op">=</span> <span class="st">"Before depuration"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/boxplot.html" class="external-link">boxplot</a></span><span class="op">(</span><span class="va">barley_dep</span><span class="op">$</span><span class="va">depurated_data</span><span class="op">[[</span><span class="st">"Yield"</span><span class="op">]</span><span class="op">]</span>, main <span class="op">=</span> <span class="st">"After depuration"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-3-1.png" width="50%"><img src="reference/figures/README-unnamed-chunk-3-2.png" width="50%"></p>
+<p><img src="reference/figures/README-unnamed-chunk-3-1.png" alt="" width="50%"><img src="reference/figures/README-unnamed-chunk-3-2.png" alt="" width="50%"></p>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>

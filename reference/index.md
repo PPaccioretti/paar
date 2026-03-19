@@ -7,13 +7,13 @@
 - [`cbind(`*`<paar>`*`)`](https://ppaccioretti.github.io/paar/reference/bind.md)
   : Bind outlier condition to an object.
 - [`compare_zone()`](https://ppaccioretti.github.io/paar/reference/compare_zone.md)
-  : Compare spatial zone means
+  : Compare means between spatial zones
 - [`depurate()`](https://ppaccioretti.github.io/paar/reference/depurate.md)
-  : Remove errors from spatial data
+  : Spatial data depuration (error removal)
 - [`fuzzy_k_means()`](https://ppaccioretti.github.io/paar/reference/fuzzy_k_means.md)
-  : Fuzzy k-means clustering
+  : Fuzzy k-means clustering (non-spatial)
 - [`kmspc()`](https://ppaccioretti.github.io/paar/reference/kmspc.md) :
-  MULTISPATI-PCA clustering
+  Spatial PCA-based fuzzy clustering (MULTISPATI-PCA)
 - [`print(`*`<paar>`*`)`](https://ppaccioretti.github.io/paar/reference/print.paar.md)
   : Print paar objects
 - [`print(`*`<summary.paar>`*`)`](https://ppaccioretti.github.io/paar/reference/print.summary.paar.md)

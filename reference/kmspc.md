@@ -1,6 +1,15 @@
-# MULTISPATI-PCA clustering
+# Spatial PCA-based fuzzy clustering (MULTISPATI-PCA)
 
-MULTISPATI-PCA clustering
+Performs clustering of spatial data using a combination of spatial
+Principal Component Analysis (PCA), and fuzzy k-means clustering.
+
+The workflow consists of:
+
+1.  Dimensionality reduction using spatial PCA
+
+2.  Selection of components based on explained spatial variance
+
+3.  Fuzzy clustering over selected components
 
 ## Usage
 
@@ -25,67 +34,110 @@ kmspc(
 
 - data:
 
-  sf object
+  an `sf` object with point geometries
 
 - variables:
 
-  variables to use for clustering, if missing, all numeric variables
-  will be used
+  `character` vector with variable names used for clustering. If
+  missing, all numeric variables in `data` are used.
 
 - number_cluster:
 
-  `numeric` vector with number of final clusters
+  `numeric` vector indicating the number of clusters to evaluate (e.g.,
+  `3:5`)
 
 - explainedVariance:
 
-  `numeric` number in percentage of explained variance from PCA analysis
-  to keep and make cluster process
+  `numeric`. Percentage (0–100) of cumulative explained spatial variance
+  used to select spatial principal components. Values between 0 and 1
+  are interpreted as proportions.
 
-- ldist:
+- ldist, udist:
 
-  `numeric` lower distance bound to identify neighbors
-
-- udist:
-
-  `numeric` upper distance bound to identify neighbors
+  `numeric`. Lower and upper distance thresholds used to define spatial
+  neighbors.
 
 - center:
 
-  a logical or numeric value, centring option if TRUE, centring by the
-  mean if FALSE no centring if a numeric vector, its length must be
-  equal to the number of columns of the data frame df and gives the
-  decentring
+  centering option passed to PCA:
+
+  TRUE
+
+  :   center variables by their mean
+
+  FALSE
+
+  :   no centering
+
+  numeric
+
+  :   custom centering vector
 
 - fuzzyness:
 
-  A number greater than 1 giving the degree of fuzzification.
+  `numeric` value greater than 1 controlling the degree of fuzziness in
+  clustering (see
+  [`e1071::cmeans`](https://rdrr.io/pkg/e1071/man/cmeans.html))
 
 - distance:
 
-  `character` Must be one of the following: If "euclidean", the mean
-  square error, if "manhattan", the mean absolute error is computed.
-  Abbreviations are also accepted.
+  `character` distance metric for clustering. One of `"euclidean"` or
+  `"manhattan"` (abbreviations allowed)
 
 - zero.policy:
 
-  default NULL, use global option value; if FALSE stop with error for
-  any empty neighbors sets, if TRUE permit the weights list to be formed
-  with zero-length weights vectors
+  Logical. If `TRUE`, allows empty neighbor sets; if `FALSE`, stops with
+  an error.
 
 - only_spca_results:
 
-  `logical`; should return both PCA and sPCA results (`FALSE`), or only
-  sPCA results (`TRUE`)? This can be a time consuming process if there
-  are multiple variables.
+  `logical`. If `TRUE`, only spatial PCA results are returned. If
+  `FALSE`, both PCA and spatial PCA summaries are included.
 
 - all_results:
 
-  `logical`; should return the results from the sPCA and PCA call?
+  `logical`. If `TRUE`, full PCA and spatial PCA objects are returned
+  (can increase computation time and memory use).
 
 ## Value
 
-a list with classification results and indices to select best number of
-clusters.
+A list with the following elements:
+
+- cluster:
+
+  `data.frame` with cluster assignments for each evaluated number of
+  clusters
+
+- indices:
+
+  `data.frame` with clustering validity indices
+
+- summaryResults:
+
+  `data.frame` with clustering metrics (iterations, SSDW)
+
+- pca_results:
+
+  (optional) PCA and/or spatial PCA summaries depending on arguments
+
+## Details
+
+Spatial relationships are defined using distance-based neighbors
+([`spdep::dnearneigh`](https://r-spatial.github.io/spdep/reference/dnearneigh.html)).
+These relationships are incorporated into the spatial PCA analysis to
+extract spatially structured components.
+
+Clustering is performed using fuzzy c-means over selected spatial
+components. Several indices are computed to help determine the optimal
+number of clusters:
+
+- Xie-Beni index
+
+- Partition coefficient
+
+- Partition entropy
+
+- Summary index (normalized combination)
 
 ## Examples
 
