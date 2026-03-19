@@ -11,8 +11,8 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 [![R-CMD-check](https://github.com/PPaccioretti/paar/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/PPaccioretti/paar/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-The goal of `paar` is to provide useful functions for precision
-agriculture spatial data depuration.
+The goal of `paar` is to provide useful tools for cleaning and
+processing spatial data in precision agriculture.
 
 ## Installation
 
@@ -33,29 +33,27 @@ pak::pkg_install("PPaccioretti/paar")
 
 ## Example
 
-The package has a complete protocol for automating error removal.
-Default values of all functions are optimized for precision agricultural
+The package provides a complete protocol for automated error removal.
+Default values of all functions are optimized for precision agriculture
 data.
 
 ``` r
 library(paar)
 library(sf)
+#> Warning: package 'sf' was built under R version 4.5.2
 data("barley", package = 'paar')
 ```
 
-`barley` data contains barley grain yield which were obtained using
+The `barley` dataset contains grain yield data collected were using
 calibrated commercial yield monitors, mounted on combines equipped with
 DGPS.
 
 ``` r
 #Convert barley data to an spatial object
-barley_sf <- st_as_sf(barley,
-                   coords = c("X", "Y"),
-                   crs = 32720)
+barley_sf <- st_as_sf(barley, coords = c("X", "Y"), crs = 32720)
 
 barley_dep <-
-  depurate(barley_sf,
-           "Yield")
+  depurate(barley_sf, "Yield")
 #> Concave hull algorithm is computed with
 #> concavity = 2 and length_threshold = 0
 
@@ -67,23 +65,24 @@ summary(barley_dep)
 #>          99 (1.3%)         6 (0.081%)
 ```
 
-Spatial yield values before and after depuration process can be plotted
+Spatial yield values before and after the depuration process can be
+visualized
 
 ``` r
 plot(barley_sf["Yield"], main = "Before depuration")
 plot(barley_dep$depurated_data["Yield"], main = "After depuration")
 ```
 
-<img src="man/figures/README-unnamed-chunk-2-1.png" width="50%" /><img src="man/figures/README-unnamed-chunk-2-2.png" width="50%" />
+<img src="man/figures/README-unnamed-chunk-2-1.png" alt="" width="50%" /><img src="man/figures/README-unnamed-chunk-2-2.png" alt="" width="50%" />
 
-Also distribution of yield values can be plotted
+The distribution of yield values can also be compared
 
 ``` r
 boxplot(barley_sf[["Yield"]], main = "Before depuration")
 boxplot(barley_dep$depurated_data[["Yield"]], main = "After depuration")
 ```
 
-<img src="man/figures/README-unnamed-chunk-3-1.png" width="50%" /><img src="man/figures/README-unnamed-chunk-3-2.png" width="50%" />
+<img src="man/figures/README-unnamed-chunk-3-1.png" alt="" width="50%" /><img src="man/figures/README-unnamed-chunk-3-2.png" alt="" width="50%" />
 
 ## References
 

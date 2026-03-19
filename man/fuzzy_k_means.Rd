@@ -2,7 +2,7 @@
 % Please edit documentation in R/fuzzy_k_means.R
 \name{fuzzy_k_means}
 \alias{fuzzy_k_means}
-\title{Fuzzy k-means clustering}
+\title{Fuzzy k-means clustering (non-spatial)}
 \usage{
 fuzzy_k_means(
   data,
@@ -13,28 +13,51 @@ fuzzy_k_means(
 )
 }
 \arguments{
-\item{data}{sf object}
+\item{data}{an \code{sf} object with point geometries}
 
-\item{variables}{variables to use for clustering, if missing, all numeric
-variables will be used}
+\item{variables}{\code{character} vector with variable names used for clustering.
+If missing, all numeric variables in \code{data} are used.}
 
-\item{number_cluster}{\code{numeric} vector with number of final clusters}
+\item{number_cluster}{\code{numeric} vector indicating the number of clusters
+to evaluate (e.g., \code{3:5})}
 
-\item{fuzzyness}{A number greater than 1 giving the degree of fuzzification.}
+\item{fuzzyness}{\code{numeric} value greater than 1 controlling the degree of
+fuzziness in clustering (see \code{e1071::cmeans})}
 
-\item{distance}{\code{character} Must be one of the following:
-If "euclidean", the mean square error, if "manhattan", the mean
-absolute error is computed. Abbreviations are also accepted.}
+\item{distance}{\code{character} distance metric for clustering.
+One of \code{"euclidean"} or \code{"manhattan"} (abbreviations allowed)}
 }
 \value{
-a list with classification results and indices to select best number of
-clusters.
+A list with:
+\describe{
+  \item{cluster}{\code{data.frame} with cluster assignments for each
+  evaluated number of clusters}
+  \item{indices}{\code{data.frame} with clustering validity indices}
+  \item{summaryResults}{\code{data.frame} with clustering metrics}
+}
 }
 \description{
-Performs a vectorized fuzzy k-means clustering, this procedure
-it is not spatial. The function is almost a wrapper of the function cmeans
-from the package e1071. Is intended to be used when `KM-sPC` procedure is not
-possible because data set has only 1 variable.
+Performs fuzzy k-means clustering on tabular data (non-spatial).
+This function is a lightweight wrapper around \code{e1071::cmeans},
+providing a vectorized workflow and clustering quality indices.
+
+It is primarily intended as a fallback method when spatial clustering
+(e.g., \code{kmspc}) cannot be applied, such as when only one variable
+is available.
+}
+\details{
+Missing values are removed prior to clustering. Observations with missing
+values are reintroduced in the output with \code{NA} cluster assignments.
+
+Clustering is performed for each value in \code{number_cluster}, and
+several indices are returned to assist in selecting the optimal number
+of clusters:
+\itemize{
+  \item Xie-Beni index
+  \item Partition coefficient
+  \item Partition entropy
+  \item Summary index
+}
 }
 \examples{
 library(sf)
@@ -64,4 +87,7 @@ wheat_clustered <- cbind(wheat_sf, fuzzy_k_means_results$cluster)
 
 # Plot the results
 plot(wheat_clustered[, "Cluster_2"])
+}
+\seealso{
+\code{\link{kmspc}}
 }

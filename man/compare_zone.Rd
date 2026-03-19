@@ -2,7 +2,7 @@
 % Please edit documentation in R/compare_zone.R
 \name{compare_zone}
 \alias{compare_zone}
-\title{Compare spatial zone means}
+\title{Compare means between spatial zones}
 \usage{
 compare_zone(
   data,
@@ -15,25 +15,58 @@ compare_zone(
 )
 }
 \arguments{
-\item{data}{\code{sf} object with zones}
+\item{data}{an \code{sf} object containing the spatial zones}
 
-\item{variable}{\code{character} or \code{sf} object to use for mean comparison}
+\item{variable}{either:
+\itemize{
+  \item a \code{character} vector with column names in \code{data}, or
+  \item an \code{sf} object with external variables to be compared. In this
+  case, values are spatially joined to \code{data}.
+}}
 
-\item{zonesCol}{\code{character} colname from data were zone are specified}
+\item{zonesCol}{\code{character}. Column name in \code{data} defining zones}
 
-\item{alpha}{\code{numeric} Significance level to use for comparison}
+\item{alpha}{\code{numeric}. Significance level for mean comparison}
 
-\item{join}{function to use for st_join if variable is \code{sf} object}
+\item{join}{function used in \code{sf::st_join} when \code{variable} is an
+external \code{sf} object (default: \code{sf::st_nearest_feature})}
 
-\item{returnLSD}{\code{logical} when LSD calculates with spatial variance should be returned}
+\item{returnLSD}{\code{logical}. If \code{TRUE}, returns the LSD value used
+for comparisons}
 
-\item{grid_dim}{\code{numeric} grid dimentins to estimate spatial variance}
+\item{grid_dim}{\code{numeric}. Grid resolution used to estimate spatial
+variance when interpolating external variables. If missing, it is
+automatically determined.}
 }
 \value{
-\code{list} with differences and descriptive_stat
+A list with:
+\describe{
+  \item{differences}{list of data frames with mean comparisons per variable}
+  \item{descriptive_stat}{data frame with descriptive statistics and spatial variance}
+}
 }
 \description{
-Compare spatial zone means
+Compares variable means across spatial zones using a spatially-adjusted
+least significant difference (LSD) approach based on kriging variance.
+
+The function accounts for spatial variability by estimating semivariograms
+and deriving a spatial variance component, which is then used to assess
+differences between zone means.
+}
+\details{
+When \code{variable} is an external \code{sf} object, values are interpolated
+using ordinary kriging before comparison. Otherwise, cross-validation of the
+variogram model is used to estimate spatial variance.
+
+Pairwise comparisons between zones are evaluated using a spatially-adjusted
+LSD criterion:
+
+\deqn{LSD = z_{1-\alpha/2} \times \sigma_{spatial}}
+
+where \eqn{\sigma_{spatial}} is derived from kriging variance.
+
+Results are presented using compact letter displays to indicate groups
+of zones that are not significantly different.
 }
 \examples{
 library(sf)
@@ -55,6 +88,6 @@ compare_zone(data_clusters, "Elev", "Cluster_3")
 \references{
 Paccioretti, P., Córdoba, M., & Balzarini, M. (2020).
 FastMapping: Software to create field maps and identify management zones
-in precision agriculture. Computers and Electronics in Agriculture, 175,
-105556 https://doi.org/10.1016/j.compag.2020.105556.
+in precision agriculture. \emph{Computers and Electronics in Agriculture},
+175, 105556. \doi{10.1016/j.compag.2020.105556}
 }
