@@ -2,7 +2,7 @@
 % Please edit documentation in R/kmspc.R
 \name{kmspc}
 \alias{kmspc}
-\title{MULTISPATI-PCA clustering}
+\title{Spatial PCA-based fuzzy clustering (MULTISPATI-PCA)}
 \usage{
 kmspc(
   data,
@@ -20,50 +20,76 @@ kmspc(
 )
 }
 \arguments{
-\item{data}{sf object}
+\item{data}{an \code{sf} object with point geometries}
 
-\item{variables}{variables to use for clustering, if missing, all numeric
-variables will be used}
+\item{variables}{\code{character} vector with variable names used for clustering.
+If missing, all numeric variables in \code{data} are used.}
 
-\item{number_cluster}{\code{numeric} vector with number of final clusters}
+\item{number_cluster}{\code{numeric} vector indicating the number of clusters
+to evaluate (e.g., \code{3:5})}
 
-\item{explainedVariance}{\code{numeric} number in percentage of explained variance
-from PCA analysis to keep and make cluster process}
+\item{explainedVariance}{\code{numeric}. Percentage (0–100) of cumulative
+explained spatial variance used to select spatial principal components.
+Values between 0 and 1 are interpreted as proportions.}
 
-\item{ldist}{\code{numeric} lower distance bound to identify neighbors}
+\item{ldist, udist}{\code{numeric}. Lower and upper distance thresholds used
+to define spatial neighbors.}
 
-\item{udist}{\code{numeric} upper distance bound to identify neighbors}
+\item{center}{centering option passed to PCA:
+\describe{
+  \item{TRUE}{center variables by their mean}
+  \item{FALSE}{no centering}
+  \item{numeric}{custom centering vector}
+}}
 
-\item{center}{a logical or numeric value, centring option
-if TRUE, centring by the mean
-if FALSE no centring
-if a numeric vector, its length must be equal to the number of
-columns of the data frame df and gives the decentring}
+\item{fuzzyness}{\code{numeric} value greater than 1 controlling the degree of
+fuzziness in clustering (see \code{e1071::cmeans})}
 
-\item{fuzzyness}{A number greater than 1 giving the degree of fuzzification.}
+\item{distance}{\code{character} distance metric for clustering.
+One of \code{"euclidean"} or \code{"manhattan"} (abbreviations allowed)}
 
-\item{distance}{\code{character} Must be one of the following:
-If "euclidean", the mean square error, if "manhattan", the mean
-absolute error is computed. Abbreviations are also accepted.}
+\item{zero.policy}{Logical. If \code{TRUE}, allows empty neighbor sets;
+if \code{FALSE}, stops with an error.}
 
-\item{zero.policy}{default NULL, use global option value;
-if FALSE stop with error for any empty neighbors sets,
-if TRUE permit the weights list to be formed with zero-length
-weights vectors}
+\item{only_spca_results}{\code{logical}. If \code{TRUE}, only spatial PCA results
+are returned. If \code{FALSE}, both PCA and spatial PCA summaries are included.}
 
-\item{only_spca_results}{\code{logical}; should return both PCA and sPCA
-results (\code{FALSE}), or only sPCA results (\code{TRUE})? This can be a
-time consuming process if there are multiple variables.}
-
-\item{all_results}{\code{logical}; should return the results from the
-sPCA and PCA call?}
+\item{all_results}{\code{logical}. If \code{TRUE}, full PCA and spatial PCA
+objects are returned (can increase computation time and memory use).}
 }
 \value{
-a list with classification results and indices to select best number of
-clusters.
+A list with the following elements:
+\describe{
+  \item{cluster}{\code{data.frame} with cluster assignments for each evaluated number of clusters}
+  \item{indices}{\code{data.frame} with clustering validity indices}
+  \item{summaryResults}{\code{data.frame} with clustering metrics (iterations, SSDW)}
+  \item{pca_results}{(optional) PCA and/or spatial PCA summaries depending on arguments}
+}
 }
 \description{
-MULTISPATI-PCA clustering
+Performs clustering of spatial data using a combination of spatial
+Principal Component Analysis (PCA), and fuzzy k-means clustering.
+
+The workflow consists of:
+\enumerate{
+  \item Dimensionality reduction using spatial PCA
+  \item Selection of components based on explained spatial variance
+  \item Fuzzy clustering over selected components
+}
+}
+\details{
+Spatial relationships are defined using distance-based neighbors
+(\code{spdep::dnearneigh}). These relationships are incorporated into the
+spatial PCA analysis to extract spatially structured components.
+
+Clustering is performed using fuzzy c-means over selected spatial components.
+Several indices are computed to help determine the optimal number of clusters:
+\itemize{
+  \item Xie-Beni index
+  \item Partition coefficient
+  \item Partition entropy
+  \item Summary index (normalized combination)
+}
 }
 \examples{
 library(sf)

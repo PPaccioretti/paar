@@ -2,7 +2,7 @@
 % Please edit documentation in R/depurate.R
 \name{depurate}
 \alias{depurate}
-\title{Remove errors from spatial data}
+\title{Spatial data depuration (error removal)}
 \usage{
 depurate(
   x,
@@ -21,69 +21,98 @@ depurate(
 )
 }
 \arguments{
-\item{x}{an \code{sf} points object}
+\item{x}{An \code{sf} object with POINT geometries.}
 
-\item{y}{\code{character} with the name of the variable to use for
-depuration/filtering process}
+\item{y}{A \code{character} string indicating the variable name used
+for filtering. If missing and only one attribute column is present,
+it is used by default.}
 
-\item{toremove}{\code{character} vector specifying the procedure to
-implement for errors removal. Default 'edges', 'outlier', 'inlier'.
-See Details.}
+\item{toremove}{A \code{character} vector specifying which procedures
+to apply. Options are \code{"edges"}, \code{"outlier"}, and
+\code{"inlier"}. The order of execution is fixed and cannot be modified.}
 
-\item{crs}{coordinate reference system: integer with the EPSG code,
-or character with proj4string to convert coordinates if \code{x} has
-longitude/latitude data}
+\item{crs}{Coordinate reference system used when transforming
+longitude/latitude data. Can be an EPSG code or proj4string.}
 
-\item{buffer}{\code{numeric} distance in meters to be removed. Negative
-values are recommended}
+\item{buffer}{A \code{numeric} value indicating the distance (in meters)
+for edge removal. Negative values are recommended to shrink boundaries.}
 
-\item{ylimitmax}{\code{numeric} of length 1 indicating the maximum limit
-for the \code{y} variable. If \code{NA} \code{Inf} is assumed}
+\item{ylimitmax}{Numeric upper bound for \code{y}. If \code{NA}, \code{Inf}
+is used.}
 
-\item{ylimitmin}{\code{numeric} of length 1 indicating the minimum limit
-for the \code{y} variable. If \code{NA} \code{-Inf} is assumed}
+\item{ylimitmin}{Numeric lower bound for \code{y}. If \code{NA}, \code{-Inf}
+is used.}
 
-\item{sdout}{\code{numeric} values outside the interval
-\eqn{mean ± sdout × sdout} values will be removed}
+\item{sdout}{Numeric multiplier for standard deviation used to detect
+global outliers.}
 
-\item{ldist}{\code{numeric} lower distance bound to identify neighbors}
+\item{ldist}{Numeric lower distance bound for neighborhood definition.}
 
-\item{udist}{\code{numeric} upper distance bound to identify neighbors}
+\item{udist}{Numeric upper distance bound for neighborhood definition.}
 
-\item{criteria}{\code{character} with "LM" and/or "MP" for methods to
-identify spatial outliers}
+\item{criteria}{Character vector specifying spatial outlier detection
+methods: \code{"LM"} (Local Moran) and/or \code{"MP"} (Moran Plot).}
 
-\item{zero.policy}{default NULL, use global option value;
-if FALSE stop with error for any empty neighbors sets,
-if TRUE permit the weights list to be formed with zero-length
-weights vectors}
+\item{zero.policy}{Logical. If \code{TRUE}, allows empty neighbor sets;
+if \code{FALSE}, stops with an error.}
 
-\item{poly_border}{\code{sf} object with one polygon or NULL. Can be
-the result of \code{concaveman::concaveman}}
+\item{poly_border}{Optional \code{sf} polygon defining field boundaries.
+If \code{NULL}, a hull is computed automatically.}
 }
 \value{
-an object of class \code{paar} with two elements:
+An object of class \code{paar} (list) with:
 \describe{
- \item{depurated_data}{\code{sf} object with the data after the removal
- process}
- \item{condition}{\code{character} vector with the condition of each
- observation}
- }
+  \item{depurated_data}{Filtered \code{sf} object}
+  \item{condition}{Character vector indicating the reason each observation
+  was removed (or \code{NA} if retained)}
+}
 }
 \description{
-Data can be filtered by null, edge values, global
- outliers and spatial outliers or local defective observations. Default
- values are optimized for precision agricultural data.
+Filters spatial point data by removing erroneous observations based on
+geometric, statistical, and spatial criteria. The function implements a
+sequential depuration workflow commonly used in precision agriculture.
 }
 \details{
-Possible values for \code{toremove} are one or more elements of:
-\describe{
-  \item{edges}{All data points for a distance of \code{buffer} m from data
-  edges are deleted.}
-  \item{outlier}{Values that are outside the mean±\code{sdout} are removed}
-  \item{inlier}{Local Moran index of spatial autocorrelation is calculated
-  for each datum as a tool to identify inliers}
+The depuration process is applied in a fixed sequence:
+
+\enumerate{
+  \item Edge removal (\code{"edges"})
+  \item Global outlier removal (\code{"outlier"})
+  \item Spatial outlier removal (\code{"inlier"})
 }
+
+The \code{toremove} argument controls which of these steps are applied,
+but **does not modify the order of execution**.
+
+Available procedures are:
+
+\describe{
+  \item{edges}{
+  Removes points located within a specified \code{buffer} distance from
+  the field boundary. The boundary is computed using a concave hull
+  (\code{concaveman}) or a convex hull if the package is not available.
+  }
+
+  \item{outlier}{
+  Removes global outliers based on:
+  \itemize{
+    \item user-defined limits (\code{ylimitmin}, \code{ylimitmax})
+    \item statistical thresholds defined as
+    \eqn{mean \pm sdout \times sd}
+  }
+  }
+
+  \item{inlier}{
+  Identifies and removes spatial outliers using:
+  \itemize{
+    \item Local Moran's I statistic ("LM")
+    \item Moran scatterplot influence ("MP")
+  }
+  }
+}
+
+Default parameter values are tuned for precision agriculture datasets
+(e.g., yield maps).
 }
 \examples{
 library(sf)
@@ -103,7 +132,8 @@ depurated_data <- depurated$depurated_data
 all_data_condition <- cbind(depurated, barley)
 }
 \references{
-Vega, A., Córdoba, M., Castro-Franco, M. et al. Protocol for
-automating error removal from yield maps. Precision Agric 20, 1030–1044
-(2019). https://doi.org/10.1007/s11119-018-09632-8
+Vega, A., Córdoba, M., Castro-Franco, M. et al. (2019).
+Protocol for automating error removal from yield maps.
+\emph{Precision Agriculture}, 20, 1030–1044.
+\doi{10.1007/s11119-018-09632-8}
 }

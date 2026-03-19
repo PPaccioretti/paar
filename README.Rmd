@@ -22,8 +22,7 @@ knitr::opts_chunk$set(
 [![R-CMD-check](https://github.com/PPaccioretti/paar/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/PPaccioretti/paar/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-The goal of `paar` is to provide useful functions for 
-precision agriculture spatial data depuration. 
+The goal of `paar` is to provide useful tools for cleaning and processing spatial data in precision agriculture.
 
 ## Installation
 
@@ -41,8 +40,8 @@ pak::pkg_install("PPaccioretti/paar")
 
 ## Example
 
-The package has a complete protocol for automating error removal. Default
-values of all functions are optimized for precision agricultural data.
+The package provides a complete protocol for automated error removal.
+Default values of all functions are optimized for precision agriculture data.
 
 ```{r example, message=FALSE}
 library(paar)
@@ -50,30 +49,27 @@ library(sf)
 data("barley", package = 'paar')
 ```
 
-`barley` data contains barley grain yield which were obtained using calibrated commercial yield monitors, mounted on combines equipped with DGPS.
+The `barley` dataset contains grain yield data collected were using calibrated commercial yield monitors, mounted on combines equipped with DGPS.
 
 ```{r barley}
 #Convert barley data to an spatial object
-barley_sf <- st_as_sf(barley,
-                   coords = c("X", "Y"),
-                   crs = 32720)
+barley_sf <- st_as_sf(barley, coords = c("X", "Y"), crs = 32720)
 
 barley_dep <-
-  depurate(barley_sf,
-           "Yield")
+  depurate(barley_sf, "Yield")
 
 # Summary of depurated data
 summary(barley_dep)
 ```
 
-Spatial yield values before and after depuration process can be plotted
+Spatial yield values before and after the depuration process can be visualized
 
 ```{r, fig.height=2, fig.height=5, out.width="50%", fig.show="hold"}
 plot(barley_sf["Yield"], main = "Before depuration")
 plot(barley_dep$depurated_data["Yield"], main = "After depuration")
 ```
 
-Also distribution of yield values can be plotted
+The distribution of yield values can also be compared
 
 ```{r, fig.height=2, fig.height=5, out.width="50%", fig.show="hold"}
 boxplot(barley_sf[["Yield"]], main = "Before depuration")
