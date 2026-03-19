@@ -1,5 +1,7 @@
 # Changelog
 
+## paar (development version)
+
 ## paar 1.0.2
 
 CRAN release: 2026-03-19
