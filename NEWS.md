@@ -1,3 +1,5 @@
+# paar 1.0.2
+
 # (development version)
 
 * Help pages were revised for clarity, consistency, and improved user guidance [#21](https://github.com/PPaccioretti/paar/issues/21)
